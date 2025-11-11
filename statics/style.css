@@ -1,0 +1,16 @@
+/* Simple extra styles */
+body {
+  background-color: #f3f4f6; /* Tailwind gray-100 fallback */
+}
+
+table {
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid #d1d5db; /* gray-300 */
+}
+
+footer {
+  margin-top: 40px;
+}
