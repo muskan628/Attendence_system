@@ -73,10 +73,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <label class="block mb-2 text-gray-700 font-semibold">Select Role</label>
         <select name="role" required class="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
           <option value="">-- Select Role --</option>
-          <option value="admin">Admin</option>
-          <option value="hod">HOD</option>
-          <option value="staff">Staff</option>
-          <option value="student">Student</option>
+          <option value="admin">admin</option>
+          <option value="hod">hod</option>
+          <option value="staff">staff</option>
+          <option value="student">student</option>
         </select>
       </div>
 
