@@ -20,8 +20,8 @@ $students = [
 <head>
     <meta charset="UTF-8">
     <title>Teacher Dashboard</title>
-    <link rel="stylesheet" href="/assets/css/staff_dashboard.css">
-    <script src="/assets/js/staff_dashboard.js" defer></script>
+    <link rel="stylesheet" href="../assets/css/staff_dashboard.css">
+    <script src="../assets/js/staff_dashboard.js" defer></script>
 </head>
 
 <body>
