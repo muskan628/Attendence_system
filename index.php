@@ -15,33 +15,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $sql = "SELECT * FROM users WHERE userid = '$userid' AND role = '$role'";
         $result = $conn->query($sql);
 
-        if ($result && $result->num_rows > 0) {
-            $row = $result->fetch_assoc();
+     if ($result && $result->num_rows > 0) {
+    $row = $result->fetch_assoc();
 
-            if (password_verify($password, $row['password'])) {
-                $_SESSION['userid'] = $row['userid'];
-                $_SESSION['role'] = $row['role'];
+    // FIX: Plain text password checking
+    if ($password === $row['password']) {
 
-                switch ($row['role']) {
-                    case 'admin':
-                        header("Location: admin/dashboard.php");
-                        exit;
-                    case 'hod':
-                        header("Location: hod/dashboard.php");
-                        exit;
-                    case 'staff':
-                        header("Location: staff/dashboard.php");
-                        exit;
-                    case 'student':
-                        header("Location: student/dashboard.php");
-                        exit;
-                }
-            } else {
-                $error = "Incorrect password!";
-            }
-        } else {
-            $error = "User not found for selected role!";
+        $_SESSION['userid'] = $row['userid'];
+        $_SESSION['role'] = $row['role'];
+
+        switch ($row['role']) {
+            case 'admin':
+                header("Location: admin/dashboard.php");
+                exit;
+            case 'hod':
+                header("Location: hod/dashboard.php");
+                exit;
+            case 'staff':
+                header("Location: staff/dashboard.php");
+                exit;
+            case 'student':
+                header("Location: student/dashboard.php");
+                exit;
         }
+
+    } else {
+        $error = "Incorrect password!";
+    }
+} else {
+    $error = "User not found for selected role!";
+}
+
     }
 }
 ?>
