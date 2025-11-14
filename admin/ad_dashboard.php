@@ -102,4 +102,17 @@ $defaulters = [
                     <td><?= $row['b50'] ?></td>
                     <td><?= $row['b60'] ?></td>
                     <td><?= $row['b70'] ?></td>
-                    <td><?= $row['total'] ?
+                    <td><?= $row['total'] ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </table>
+    </div>
+
+    <footer>
+        © 2025 Akal University. All Rights Reserved.
+    </footer>
+
+</div>
+</body>
+</html>
+
