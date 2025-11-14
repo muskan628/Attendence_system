@@ -1,0 +1,135 @@
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #f2f6f9;
+}
+
+.sidebar {
+  width: 230px;
+  height: 100vh;
+  position: fixed;
+  background: white;
+  padding: 20px;
+  border-right: 1px solid #ddd;
+}
+
+.sidebar h2 {
+  text-align: center;
+  font-size: 18px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 30px;
+}
+
+.sidebar li {
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.sidebar li.active,
+.sidebar li:hover {
+  background: #e6f0ff;
+  color: #007aff;
+  font-weight: bold;
+}
+
+.main {
+  margin-left: 260px;
+  padding: 20px;
+}
+
+.summary-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+}
+
+.summary-card {
+  background: #0077ff;
+  color: white;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.summary-card p {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.class-row {
+  margin-top: 20px;
+  display: flex;
+  gap: 15px;
+}
+
+.class-row input {
+  width: 250px;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #bbb;
+}
+
+.go {
+  padding: 8px 15px;
+  background: #006be1;
+  color: white;
+  border: none;
+  border-radius: 6px;
+}
+
+.table-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.green { color: #00b33c; font-weight: bold; }
+.yellow { color: #e6c200; font-weight: bold; }
+.red { color: #ff1a1a; font-weight: bold; }
+
+.submit-btn {
+  margin-top: 15px;
+  background: #007aff;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: none;
+}
+
+.report-section {
+  display: grid;
+  grid-template-columns: 60% 40%;
+  margin-top: 25px;
+  gap: 20px;
+}
+
+.left-box, .right-box {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+footer {
+  margin-top: 40px;
+  text-align: center;
+  color: gray;
+}

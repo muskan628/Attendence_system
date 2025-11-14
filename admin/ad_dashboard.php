@@ -107,3 +107,12 @@ $defaulters = [
             <?php endforeach; ?>
         </table>
     </div>
+
+    <footer>
+        © 2025 Akal University. All Rights Reserved.
+    </footer>
+
+</div>
+</body>
+</html>
+
