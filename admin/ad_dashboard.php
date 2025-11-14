@@ -27,9 +27,8 @@ $defaulters = [
 <head>
     <meta charset="UTF-8">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="/assets/css/admin_dashboard.css">
-    <script src="/assets/js/admin_dashboard.js" defer></script>
-
+    <link rel="stylesheet" href="../assets/css/admin_dashboard.css">
+    <script src="../assets/js/admin_dashboard.js" defer></script>
 </head>
 
 <body>

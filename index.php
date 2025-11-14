@@ -19,41 +19,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->execute();
         $result = $stmt->get_result();
 
-        // If user exists
-        if ($result->num_rows == 1) {
-            $row = $result->fetch_assoc();
+        if ($result && $result->num_rows > 0) {
+    $row = $result->fetch_assoc();
 
-            // Secure password check
-            if (password_verify($password, $row['password'])) {
+    // FIX: Plain text password checking
+    if ($password === $row['password']) {
 
-                // Set session
-                $_SESSION['userid'] = $row['userid'];
-                $_SESSION['role'] = $row['role'];
+        $_SESSION['userid'] = $row['userid'];
+        $_SESSION['role'] = $row['role'];
 
-                // Redirect to respective dashboards
-                if ($row['role'] == 'admin') {
-                    header("Location: admin/ad_dashboard.php");
-                    exit();
-                } elseif ($row['role'] == 'hod') {
-                    header("Location: hod/hod_dashboard.php");
-                    exit();
-                } elseif ($row['role'] == 'staff') {
-                    header("Location: staff/staff_dashboard.php");
-                    exit();
-                } elseif ($row['role'] == 'student') {
-                    header("Location: student/student_dashboard.php");
-                    exit();
-                }
-
-            } else {
-                $error = "Incorrect password!";
-            }
-
-        } else {
-            $error = "User not found for selected role!";
+        switch ($row['role']) {
+            case 'admin':
+                header("Location: admin/ad_dashboard.php");
+                exit;
+            case 'hod':
+                header("Location: hod/hod_dashboard.php");
+                exit;
+            case 'staff':
+                header("Location: staff/staff_dashboard.php");
+                exit;
+            case 'student':
+                header("Location: student/student_dashboard.php");
+                exit;
         }
 
-        $stmt->close();
+    } else {
+        $error = "Incorrect password!";
+    }
+} else {
+    $error = "User not found for selected role!";
+}
     }
 }
 ?>

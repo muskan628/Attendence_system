@@ -25,9 +25,9 @@ $courses = [
 <head>
     <meta charset="UTF-8">
     <title>Student Dashboard</title>
-    <link rel="stylesheet" href="/assets/css/student_dashboard.css">
+    <link rel="stylesheet" href="../assets/css/student_dashboard.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="/assets/js/student_dashboard.js" defer></script>
+    <script src="../assets/js/student_dashboard.js" defer></script>
 </head>
 
 <body>
