@@ -27,7 +27,7 @@ $defaulters = [
 <head>
     <meta charset="UTF-8">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="/assets/css/admin_dashboard.css">
+    <link rel="stylesheet" href="../assets/css/admin_dashboard.css">
     <script src="/assets/js/admin_dashboard.js" defer></script>
 </head>
 
@@ -102,4 +102,8 @@ $defaulters = [
                     <td><?= $row['b50'] ?></td>
                     <td><?= $row['b60'] ?></td>
                     <td><?= $row['b70'] ?></td>
-                    <td><?= $row['total'] ?
+                    <td><?= $row['total'] ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </table>
+    </div>

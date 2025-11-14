@@ -26,13 +26,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         switch ($row['role']) {
             case 'admin':
-                header("Location: admin/dashboard.php");
+                header("Location: admin/ad_dashboard.php");
                 exit;
             case 'hod':
-                header("Location: hod/dashboard.php");
+                header("Location: hod/hod_dashboard.php");
                 exit;
             case 'staff':
-                header("Location: staff/dashboard.php");
+                header("Location: staff/staff_dashboard.php");
                 exit;
             case 'student':
                 header("Location: student/dashboard.php");
