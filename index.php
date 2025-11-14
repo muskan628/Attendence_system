@@ -35,13 +35,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     header("Location: admin/ad_dashboard.php");
                     exit();
                 } elseif ($row['role'] == 'hod') {
-                    header("Location: hod/dashboard.php");
+                    header("Location: hod/hod_dashboard.php");
                     exit();
                 } elseif ($row['role'] == 'staff') {
-                    header("Location: staff/dashboard.php");
+                    header("Location: staff/staff_dashboard.php");
                     exit();
                 } elseif ($row['role'] == 'student') {
-                    header("Location: student/dashboard.php");
+                    header("Location: student/student_dashboard.php");
                     exit();
                 }
 
