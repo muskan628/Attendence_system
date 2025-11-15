@@ -1,19 +1,83 @@
 <?php
-// SUMMARY CARDS
+session_start();
+include('../includes/db_connect.php');
+
+// TODO: baad ch login ton teacher da naam / id leyo
+$teacher_name = "Demo Teacher";
+
+// ---------- GET SELECTED SUBJECT & DATE (from GET) ----------
+$selected_subject_code = $_GET['subject'] ?? '';
+$selected_date         = $_GET['date'] ?? date('Y-m-d');
+
+// ---------- SUBJECTS DROPDOWN DATA ----------
+$subjects = [];
+$subSql = "SELECT code, name FROM subjects ORDER BY code";
+$subRes = $conn->query($subSql);
+if ($subRes && $subRes->num_rows > 0) {
+    while ($row = $subRes->fetch_assoc()) {
+        $subjects[] = $row;
+    }
+}
+
+// ---------- LOAD STUDENTS FOR SELECTED SUBJECT ----------
+$students = [];
+
+if (!empty($selected_subject_code)) {
+    /*
+        enrollments: id, student_id, subject_code
+        student: id, roll_no, name, department, class_id
+    */
+    $sqlStudents = "
+        SELECT 
+            st.id          AS student_id,
+            st.roll_no     AS roll_no,
+            st.name        AS student_name
+        FROM enrollments e
+        JOIN student st ON st.id = e.student_id
+        WHERE e.subject_code = ?
+        ORDER BY st.roll_no
+    ";
+
+    $stmt = $conn->prepare($sqlStudents);
+    if ($stmt) {
+        $stmt->bind_param("s", $selected_subject_code);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        while ($row = $result->fetch_assoc()) {
+            $students[] = [
+                'id'   => $row['student_id'],
+                'roll' => $row['roll_no'],
+                'name' => $row['student_name'],
+            ];
+        }
+    }
+}
+
+// ---------- SUMMARY CARDS (simple dynamic) ----------
+$totalClasses = 0;
+$totalStudents = 0;
+$todaysPresent = 0;
+$overallPercent = "0%";
+
+// Total classes = distinct class_id for subjects? abhi simple: count subjects
+$totalClasses = count($subjects);
+
+// My Students = unique students for selected subject (agar selected hai)
+$totalStudents = count($students);
+
+// TODO: attendance table ton calculation baad ch add karange
+$todaysPresent = 0;
+$overallPercent = "0%";
+
 $summary = [
-    ["title" => "Total Classes", "value" => 180],
-    ["title" => "My Students", "value" => 180],
-    ["title" => "Today’s Present", "value" => 155],
-    ["title" => "My Overall Attendance", "value" => "86%"]
+    ["title" => "Total Classes", "value" => $totalClasses],
+    ["title" => "My Students", "value" => $totalStudents],
+    ["title" => "Today’s Present", "value" => $todaysPresent],
+    ["title" => "My Overall Attendance", "value" => $overallPercent]
 ];
 
-// STUDENT ATTENDANCE TABLE
-$students = [
-    ["roll" => "A023PH101", "name" => "Amit Sharma", "att" => 88, "abs" => 20, "leave" => 10],
-    ["roll" => "AMIT", "name" => "Amit Sharma", "att" => 72, "abs" => 25, "leave" => 5],
-    ["roll" => "DIVYA", "name" => "Divya Singh", "att" => 60, "abs" => 35, "leave" => 10],
-    ["roll" => "RAJESH", "name" => "Rajesh Kumar", "att" => 7, "abs" => 35, "leave" => 12],
-];
+$msg = $_GET['msg'] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -40,55 +104,103 @@ $students = [
 
 <!-- MAIN AREA -->
 <div class="main">
+
+    <!-- Optional success message -->
+    <?php if ($msg === 'success'): ?>
+        <div class="alert success">
+            Attendance saved successfully!
+        </div>
+    <?php endif; ?>
+
     <!-- SUMMARY BOXES -->
     <div class="summary-row">
         <?php foreach ($summary as $row): ?>
             <div class="summary-card">
-                <h3><?= $row['title'] ?></h3>
-                <p><?= $row['value'] ?></p>
+                <h3><?= htmlspecialchars($row['title']) ?></h3>
+                <p><?= htmlspecialchars($row['value']) ?></p>
             </div>
         <?php endforeach; ?>
     </div>
 
-    <h1>Welcome, [Teacher’s Name]!</h1>
+    <h1>Welcome, <?= htmlspecialchars($teacher_name) ?>!</h1>
 
-    <!-- CLASS SELECTION -->
+    <!-- SUBJECT & DATE SELECTION -->
     <div class="class-row">
-        <label>Select Class & Date</label>
-        <input type="text" placeholder="Select Class (e.g., JP Physics)">
-        <button class="go">Go</button>
+        <form method="GET" action="">
+            <label>Select Subject & Date</label>
+
+            <select name="subject" required>
+                <option value="">-- Select Subject --</option>
+                <?php foreach ($subjects as $sub): ?>
+                    <option value="<?= htmlspecialchars($sub['code']) ?>"
+                        <?= ($sub['code'] == $selected_subject_code) ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($sub['code'] . ' - ' . $sub['name']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+
+            <input type="date" name="date" value="<?= htmlspecialchars($selected_date) ?>">
+            <button type="submit" class="go">Go</button>
+        </form>
     </div>
 
     <!-- ATTENDANCE TABLE -->
     <div class="table-card">
-        <h2>UG-1 Physics – 01/11/2024</h2>
-        <table>
-            <tr>
-                <th>S. No.</th>
-                <th>Student Name</th>
-                <th>Absent</th>
-                <th>Leave</th>
-                <th>Attendance %</th>
-            </tr>
+        <h2>
+            <?php if ($selected_subject_code): ?>
+                Subject: <?= htmlspecialchars($selected_subject_code) ?> – <?= htmlspecialchars($selected_date) ?>
+            <?php else: ?>
+                Please select a subject to view students
+            <?php endif; ?>
+        </h2>
 
-            <?php
-            $count = 1;
-            foreach ($students as $s): ?>
-                <tr>
-                    <td><?= $count++ ?></td>
-                    <td><?= $s['name'] ?></td>
-                    <td><?= $s['abs'] ?></td>
-                    <td><?= $s['leave'] ?></td>
-                    <td class="<?= $s['att'] >= 75 ? 'green' : ($s['att'] >= 50 ? 'yellow' : 'red') ?>">
-                        <?= $s['att'] ?>%
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        </table>
-        <button class="submit-btn">Submit Attendance</button>
+        <?php if (!empty($students)): ?>
+            <form method="POST" action="save_attendance.php">
+                <input type="hidden" name="subject_code" value="<?= htmlspecialchars($selected_subject_code) ?>">
+                <input type="hidden" name="date" value="<?= htmlspecialchars($selected_date) ?>">
+
+                <table>
+                    <tr>
+                        <th>S. No.</th>
+                        <th>Roll No.</th>
+                        <th>Student Name</th>
+                        <th>Present</th>
+                        <th>Absent</th>
+                        <th>Leave</th>
+                    </tr>
+
+                    <?php
+                    $count = 1;
+                    foreach ($students as $s): ?>
+                        <tr>
+                            <td><?= $count++ ?></td>
+                            <td><?= htmlspecialchars($s['roll']) ?></td>
+                            <td><?= htmlspecialchars($s['name']) ?></td>
+
+                            <!-- Radio buttons: one status per student -->
+                            <td>
+                                <input type="radio" name="status[<?= htmlspecialchars($s['roll']) ?>]" value="P" checked>
+                            </td>
+                            <td>
+                                <input type="radio" name="status[<?= htmlspecialchars($s['roll']) ?>]" value="A">
+                            </td>
+                            <td>
+                                <input type="radio" name="status[<?= htmlspecialchars($s['roll']) ?>]" value="L">
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </table>
+
+                <button type="submit" class="submit-btn">Submit Attendance</button>
+            </form>
+        <?php else: ?>
+            <?php if ($selected_subject_code): ?>
+                <p>No students found for this subject.</p>
+            <?php endif; ?>
+        <?php endif; ?>
     </div>
 
-    <!-- QUICK REPORT -->
+    <!-- QUICK REPORT (static for now) -->
     <div class="report-section">
         <div class="left-box">
             <h2>Quick Class Report</h2>
@@ -106,11 +218,11 @@ $students = [
             <h2>Students Below 75% Attendance</h2>
             <table>
                 <tr>
-                    <th>Name</th>
+                    <th>Roll No.</th>
                     <th>Absent</th>
-                    <th>View %</th>
+                    <th>Attendance %</th>
                 </tr>
-
+                <!-- TODO: future – calculate from attendance table -->
                 <tr>
                     <td>AUID</td>
                     <td>30</td>
@@ -126,7 +238,7 @@ $students = [
     </div>
 
     <footer>
-        © 2025 Panjab University | All Rights Reserved
+        © 2025 Akal University | All Rights Reserved
     </footer>
 
 </div>

@@ -1,27 +1,45 @@
 <?php
-// ADMIN SUMMARY CARDS
+// session_start();
+include('../includes/db_connect.php');      // DB connection
+include('../includes/session_check.php');   // check login
+
+// --------- 1) SUMMARY CARDS (BASIC REAL DATA) ---------
+
+// Total Students (all departments)
+$sqlTotalStudents = "SELECT COUNT(*) AS total_students FROM students";
+$res = $conn->query($sqlTotalStudents);
+$row = $res ? $res->fetch_assoc() : ['total_students' => 0];
+$totalStudents = (int)$row['total_students'];
+
+// For now, Present (Today), Total Absent, Overall % static rakhde aa
+// baad ch attendance table ton calculate kar lawange
+$presentToday   = 950;
+$totalAbsent    = 250;
+$overallPercent = "79.17%";
+
 $summary = [
-    ["title" => "Total Students", "value" => 1200],
-    ["title" => "Present (Today)", "value" => 950],
-    ["title" => "Total Absent", "value" => 250],
-    ["title" => "Overall Attendance %", "value" => "79.17%"]
+    ["title" => "Total Students",        "value" => $totalStudents],
+    ["title" => "Present (Today)",       "value" => $presentToday],
+    ["title" => "Total Absent",          "value" => $totalAbsent],
+    ["title" => "Overall Attendance %",  "value" => $overallPercent]
 ];
 
-// Attendance Summary Table
+// --------- 2) ATTENDANCE SUMMARY (ABHI STATIC ARRAY) ---------
+// Later: group by department from attendance table
 $attendance = [
-    ["dept" => "Physics", "strength" => 300, "absent" => 40, "leave" => 10],
-    ["dept" => "Chemistry", "strength" => 280, "absent" => 70, "leave" => 10],
+    ["dept" => "Physics",     "strength" => 300, "absent" => 40, "leave" => 10],
+    ["dept" => "Chemistry",   "strength" => 280, "absent" => 70, "leave" => 10],
     ["dept" => "Mathematics", "strength" => 260, "absent" => 60, "leave" => 10]
 ];
 
-// Defaulter Summary Table
+// --------- 3) DEFAULTER SUMMARY (STATIC FOR NOW) ---------
 $defaulters = [
-    ["dept" => "Physics", "b50" => 15, "b60" => 20, "b70" => 25, "total" => 70],
-    ["dept" => "Chemistry", "b50" => 30, "b60" => 25, "b70" => 40, "total" => 117],
+    ["dept" => "Physics",     "b50" => 15, "b60" => 20, "b70" => 25, "total" => 70],
+    ["dept" => "Chemistry",   "b50" => 30, "b60" => 25, "b70" => 40, "total" => 117],
     ["dept" => "Mathematics", "b50" => 20, "b60" => 15, "b70" => 35, "total" => 70]
 ];
-?>
 
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -42,6 +60,11 @@ $defaulters = [
         <li>Manage Users</li>
         <li>Settings</li>
     </ul>
+    
+    <!-- Logout Button -->
+    <div class="logout-box">
+        <a href="../logout.php" class="logout-btn">Logout</a>
+    </div>
 </div>
 
 <div class="main">
@@ -51,8 +74,8 @@ $defaulters = [
     <div class="summary-box">
         <?php foreach ($summary as $item): ?>
             <div class="card">
-                <p><?= $item['title'] ?></p>
-                <h3><?= $item['value'] ?></h3>
+                <p><?= htmlspecialchars($item['title']) ?></p>
+                <h3><?= htmlspecialchars($item['value']) ?></h3>
             </div>
         <?php endforeach; ?>
     </div>
@@ -71,18 +94,26 @@ $defaulters = [
 
             <?php foreach ($attendance as $row): 
                 $present = $row['strength'] - ($row['absent'] + $row['leave']);
-                $percent = round(($present / $row['strength']) * 100, 2);
+                $percent = $row['strength'] > 0 
+                    ? round(($present / $row['strength']) * 100, 2) 
+                    : 0;
             ?>
                 <tr>
-                    <td><?= $row['dept'] ?></td>
-                    <td><?= $row['strength'] ?></td>
-                    <td><?= $row['absent'] ?></td>
-                    <td><?= $row['leave'] ?></td>
+                    <td><?= htmlspecialchars($row['dept']) ?></td>
+                    <td><?= (int)$row['strength'] ?></td>
+                    <td><?= (int)$row['absent'] ?></td>
+                    <td><?= (int)$row['leave'] ?></td>
                     <td><?= $percent ?>%</td>
                 </tr>
             <?php endforeach; ?>
         </table>
     </div>
+
+    <!-- CSV Import Form -->
+    <form method="POST" enctype="multipart/form-data" action="import_students.php">
+        <input type="file" name="csv_file" accept=".csv" required>
+        <button type="submit">Import CSV</button>
+    </form>
 
     <!-- Defaulter Summary -->
     <div class="table-card">
@@ -98,21 +129,16 @@ $defaulters = [
 
             <?php foreach ($defaulters as $row): ?>
                 <tr>
-                    <td><?= $row['dept'] ?></td>
-                    <td><?= $row['b50'] ?></td>
-                    <td><?= $row['b60'] ?></td>
-                    <td><?= $row['b70'] ?></td>
-                    <td><?= $row['total'] ?></td>
-                </tr>
+                    <td><?= htmlspecialchars($row['dept']) ?></td>
+                    <td><?= (int)$row['b50'] ?></td>
+                    <td><?= (int)$row['b60'] ?></td>
+                    <td><?= (int)$row['b70'] ?></td>
+                    <td><?= (int)$row['total'] ?></td>
+                </tr>   
             <?php endforeach; ?>
         </table>
     </div>
-
-    <footer>
-        © 2025 Akal University. All Rights Reserved.
-    </footer>
-
 </div>
+
 </body>
 </html>
-
