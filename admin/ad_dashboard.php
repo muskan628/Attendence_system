@@ -6,7 +6,7 @@ include('../includes/session_check.php');   // check login
 // --------- 1) SUMMARY CARDS (BASIC REAL DATA) ---------
 
 // Total Students (all departments)
-$sqlTotalStudents = "SELECT COUNT(*) AS total_students FROM students";
+$sqlTotalStudents = "SELECT COUNT(*) AS total_students FROM admission";
 $res = $conn->query($sqlTotalStudents);
 $row = $res ? $res->fetch_assoc() : ['total_students' => 0];
 $totalStudents = (int)$row['total_students'];
@@ -109,11 +109,62 @@ $defaulters = [
         </table>
     </div>
 
-    <!-- CSV Import Form -->
-    <form method="POST" enctype="multipart/form-data" action="import_students.php">
-        <input type="file" name="csv_file" accept=".csv" required>
-        <button type="submit">Import CSV</button>
+  <!-- CSV IMPORT SECTION -->
+<div class="table-card">
+    <h2>Import Data</h2>
+
+    <div class="import-grid">
+
+        <!-- Import Students -->
+        <div class="import-card new-import">
+            <div class="import-icon">📄</div>
+            <h3>Import Students</h3>
+            <p>Upload admission CSV file and import into the admission table.</p>
+
+            <form method="POST" enctype="multipart/form-data" action="import_students.php">
+                
+                <label class="upload-box">
+                    <input type="file" name="csv_file" accept=".csv" required>
+                    <span class="upload-text">Click to Upload CSV</span>
+                </label>
+
+                <button type="submit" class="btn-primary big-btn">Upload & Import</button>
+            </form>
+        </div>
+
+<!-- Import Departments -->
+<div class="import-card new-import">
+    <div class="import-icon">🏛️</div>
+    <h3>Import Departments</h3>
+    <p>Upload department CSV file and import into the department table.</p>
+
+    <form method="POST" enctype="multipart/form-data" action="import_departments.php">
+
+        <label class="upload-box">
+            <input type="file" name="csv_file" accept=".csv" required>
+            <span class="upload-text">Click to Upload CSV</span>
+        </label>
+
+        <button type="submit" class="btn-primary big-btn">Upload &amp; Import</button>
     </form>
+
+    <!-- NEW: View Departments button -->
+    <div class="view-link-wrap">
+        <a href="manage_departments.php" class="btn-outline">
+            View / Manage Departments
+        </a>
+    </div>
+</div>
+
+
+    </div>
+
+    <p class="import-note">
+        * CSV headers must match database column names.
+    </p>
+</div>
+
+
 
     <!-- Defaulter Summary -->
     <div class="table-card">
