@@ -16,7 +16,7 @@ $hod_department = 'Physics';
 // 1) Total Classes (distinct current_class in this department)
 $sqlTotalClasses = "
     SELECT COUNT(DISTINCT current_class) AS total_classes
-    FROM students
+    FROM admission
     WHERE department = ?
 ";
 $stmt = $conn->prepare($sqlTotalClasses);
@@ -31,7 +31,7 @@ $totalClasses = $res['total_classes'] ?? 0;
 // 2) Total Students in this department
 $sqlTotalStudents = "
     SELECT COUNT(*) AS total_students
-    FROM students
+    FROM admission
     WHERE department = ?
 ";
 $stmt = $conn->prepare($sqlTotalStudents);
@@ -56,14 +56,14 @@ $summary = [
 ];
 
 
-// ---------- CLASS SUMMARY (only from students table for now) ----------
+// ---------- CLASS SUMMARY (from admission table) ----------
 // Each current_class in this department, and total students in that class
 
 $sqlClassSummary = "
     SELECT 
         current_class AS class_name,
         COUNT(*) AS total_students
-    FROM students
+    FROM admission
     WHERE department = ?
     GROUP BY current_class
     ORDER BY current_class
