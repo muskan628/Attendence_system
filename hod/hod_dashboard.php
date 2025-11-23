@@ -1,17 +1,15 @@
 <?php
-session_start();
+// session_start();
 include('../includes/db_connect.php');
+include('../includes/session_check.php'); // je HOD login alag aa ta
 
-// DEBUG: check connection
-if (!$conn) {
-    die("DB connection error");
-}
-
-// TODO: Later: get this from session (hod login)
+// TODO: baad ch login ton HOD da department leyo
 // e.g. $hod_department = $_SESSION['department'];
-$hod_department = 'Physics';
+$hod_department = 'Physics';   // TEMP: static rakheya
 
-// ---------- SUMMARY CARDS (REAL DATA) ----------
+/* ---------------------------------------------------
+   1) SUMMARY CARDS (REAL DATA FROM admission TABLE)
+   --------------------------------------------------- */
 
 // 1) Total Classes (distinct current_class in this department)
 $sqlTotalClasses = "
@@ -26,7 +24,8 @@ if (!$stmt) {
 $stmt->bind_param("s", $hod_department);
 $stmt->execute();
 $res = $stmt->get_result()->fetch_assoc();
-$totalClasses = $res['total_classes'] ?? 0;
+$totalClasses = (int)($res['total_classes'] ?? 0);
+$stmt->close();
 
 // 2) Total Students in this department
 $sqlTotalStudents = "
@@ -41,28 +40,31 @@ if (!$stmt) {
 $stmt->bind_param("s", $hod_department);
 $stmt->execute();
 $res = $stmt->get_result()->fetch_assoc();
-$totalStudents = $res['total_students'] ?? 0;
+$totalStudents = (int)($res['total_students'] ?? 0);
+$stmt->close();
 
-// 3) For now, attendance not linked -> 0
+// 3) Department Attendance % (abhi 0 rakheya – baad ch attendance table ton)
 $deptAttendancePercent = 0;
+
+// 4) Defaulters Count (abhi 0 – baad ch attendance summary ton)
 $defaultersCount = 0;
 
-// Summary array for cards
+// Summary array
 $summary = [
-    ["title" => "Total Classes", "value" => $totalClasses],
-    ["title" => "Total Students", "value" => $totalStudents],
-    ["title" => "Department Attendance %", "value" => $deptAttendancePercent . "%"],
-    ["title" => "Defaulters (<75%)", "value" => $defaultersCount]
+    ["title" => "Total Classes",            "value" => $totalClasses],
+    ["title" => "Total Students",           "value" => $totalStudents],
+    ["title" => "Department Attendance %",  "value" => $deptAttendancePercent . "%"],
+    ["title" => "Defaulters (<75%)",        "value" => $defaultersCount]
 ];
 
-
-// ---------- CLASS SUMMARY (from admission table) ----------
-// Each current_class in this department, and total students in that class
+/* ---------------------------------------------------
+   2) CLASS-WISE SUMMARY (FROM admission TABLE)
+   --------------------------------------------------- */
 
 $sqlClassSummary = "
     SELECT 
         current_class AS class_name,
-        COUNT(*) AS total_students
+        COUNT(*)      AS total_students
     FROM admission
     WHERE department = ?
     GROUP BY current_class
@@ -83,10 +85,11 @@ $classFilterOptions = [];
 while ($row = $result->fetch_assoc()) {
     $total = (int)$row['total_students'];
 
+    // Abhi attendance link nahi, is karke sab 0
     $classSummary[] = [
         "class_name" => $row['class_name'],
         "total"      => $total,
-        "present"    => 0,          // TODO: link with attendance table later
+        "present"    => 0,          // TODO: attendance table ton fill
         "absent"     => 0,
         "attendance" => "0%"
     ];
@@ -94,15 +97,21 @@ while ($row = $result->fetch_assoc()) {
     $classFilterOptions[] = $row['class_name'];
 }
 
-// remove duplicates just in case
+$stmt->close();
+
+// filter dropdown lai unique list
 $classFilterOptions = array_unique($classFilterOptions);
 
+/* ---------------------------------------------------
+   3) DEFAULTER SUMMARY (PLACEHOLDER)
+   --------------------------------------------------- */
+// Later: attendance_summary table ya view ton data
+$defaulters = [];   // hune empty rakheya
 
-// ---------- DEFAULTER SUMMARY (temporary empty) ----------
-// Later: fill from attendance summary table / view
-$defaulters = []; 
+// Optional: import subjects success message
+$status  = $_GET['status'] ?? '';
+$count   = isset($_GET['count']) ? (int)$_GET['count'] : 0;
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -114,6 +123,7 @@ $defaulters = [];
 
 <body>
 
+<!-- SIDEBAR -->
 <div class="sidebar">
     <h2>Akal University</h2>
     <ul>
@@ -125,8 +135,16 @@ $defaulters = [];
     </ul>
 </div>
 
+<!-- MAIN CONTENT -->
 <div class="main">
     <h1>HOD Dashboard (<?= htmlspecialchars($hod_department) ?>)</h1>
+
+    <!-- OPTIONAL IMPORT SUCCESS -->
+    <?php if ($status === 'subjects_imported'): ?>
+        <div class="alert-success">
+            ✅ <?= $count ?> subject(s) imported successfully.
+        </div>
+    <?php endif; ?>
 
     <!-- SUMMARY CARDS -->
     <div class="summary-box">
@@ -138,7 +156,7 @@ $defaulters = [];
         <?php endforeach; ?>
     </div>
 
-    <!-- FILTERS & BUTTONS -->
+    <!-- FILTERS ROW (Future use) -->
     <div class="filter-row">
         <select>
             <option value="">Filter by Date</option>
@@ -177,11 +195,13 @@ $defaulters = [];
                 <?php foreach ($classSummary as $row): ?>
                     <tr>
                         <td><?= htmlspecialchars($row['class_name']) ?></td>
-                        <td><?= $row['total'] ?></td>
-                        <td><?= $row['present'] ?></td>
-                        <td><?= $row['absent'] ?></td>
-                        <td><?= $row['attendance'] ?></td>
-                        <td><button class="view-btn">View Details</button></td>
+                        <td><?= (int)$row['total'] ?></td>
+                        <td><?= (int)$row['present'] ?></td>
+                        <td><?= (int)$row['absent'] ?></td>
+                        <td><?= htmlspecialchars($row['attendance']) ?></td>
+                        <td>
+                            <button class="view-btn">View Details</button>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             <?php else: ?>
@@ -192,15 +212,15 @@ $defaulters = [];
         </table>
     </div>
 
-    <!-- DEFAULTER TABLE -->
+    <!-- DEFAULTER TABLE (DEPT-WIDE) -->
     <div class="table-card">
         <h2>Defaulter Summary (Department-wide)</h2>
         <table>
             <tr>
                 <th>Course</th>
                 <th>Students &lt;50%</th>
-                <th>50-60%</th>
-                <th>70-75%</th>
+                <th>50–60%</th>
+                <th>70–75%</th>
                 <th>Total Below 75%</th>
             </tr>
 
@@ -208,10 +228,10 @@ $defaulters = [];
                 <?php foreach ($defaulters as $row): ?>
                     <tr>
                         <td><?= htmlspecialchars($row['course']) ?></td>
-                        <td><?= $row['b50'] ?></td>
-                        <td><?= $row['b5060'] ?></td>
-                        <td><?= $row['b7075'] ?></td>
-                        <td><?= $row['total75'] ?></td>
+                        <td><?= (int)$row['b50'] ?></td>
+                        <td><?= (int)$row['b5060'] ?></td>
+                        <td><?= (int)$row['b7075'] ?></td>
+                        <td><?= (int)$row['total75'] ?></td>
                     </tr>
                 <?php endforeach; ?>
             <?php else: ?>
@@ -221,6 +241,23 @@ $defaulters = [];
             <?php endif; ?>
         </table>
     </div>
+
+    <!-- (OPTIONAL) SUBJECT IMPORT CARD – je tu HOD se subject_details import karna -->
+    
+    <div class="table-card">
+        <h2>Import Subject Details</h2>
+        <p>Upload subject_details CSV file.</p>
+
+        <form method="POST" enctype="multipart/form-data" action="import_subjects.php">
+            <label class="upload-box">
+                <input type="file" name="csv_file" accept=".csv" required>
+                <span class="upload-text">Click to Upload CSV</span>
+            </label>
+
+            <button type="submit" class="btn-primary">Upload &amp; Import</button>
+        </form>
+    </div>
+   
 
 </div>
 

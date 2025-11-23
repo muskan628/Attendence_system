@@ -5,11 +5,13 @@ include('../includes/session_check.php');
 /* ---------- ADD NEW DEPARTMENT ---------- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['department_name'])) {
     $name = trim($_POST['department_name']);
-    $hod  = isset($_POST['hod_id']) && $_POST['hod_id'] !== '' ? (int)$_POST['hod_id'] : null;
 
     if ($name !== '') {
-        $stmt = $conn->prepare("INSERT INTO department (Hod_id, DEPARTMENT_NAME) VALUES (?, ?)");
-        $stmt->bind_param("is", $hod, $name);
+        $stmt = $conn->prepare("INSERT INTO department (DEPARTMENT_NAME) VALUES (?)");
+        if (!$stmt) {
+            die("Prepare failed: " . $conn->error);
+        }
+        $stmt->bind_param("s", $name);
         $stmt->execute();
         $stmt->close();
     }
@@ -54,14 +56,11 @@ $result = $conn->query("SELECT * FROM department ORDER BY ID ASC");
   gap: 10px;
   margin-bottom: 15px;
 }
-.manage-form input[type="text"],
-.manage-form input[type="number"] {
+.manage-form input[type="text"] {
   padding: 8px 10px;
   border-radius: 6px;
   border: 1px solid #d1d5db;
   font-size: 14px;
-}
-.manage-form input[name="department_name"] {
   flex: 1;
 }
 .manage-form button {
@@ -106,6 +105,39 @@ $result = $conn->query("SELECT * FROM department ORDER BY ID ASC");
 .action-icons .edit {
   color: #374151;
 }
+
+/* reuse alert style if not already in CSS */
+.alert-success {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #ecfdf3;
+  border: 1px solid #4ade80;
+  color: #166534;
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 5px #00000010;
+}
+.alert-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  border: 2px solid #22c55e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+}
+.alert-text {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+}
+.alert-text strong {
+  font-size: 15px;
+}
 </style>
 </head>
 <body>
@@ -116,10 +148,26 @@ $result = $conn->query("SELECT * FROM department ORDER BY ID ASC");
       <h2>Manage Departments</h2>
     </div>
 
-    <!-- Add Department Form (top bar like screenshot) -->
+    <!-- ✅ Update success message (old → new) -->
+    <?php if (isset($_GET['updated']) && $_GET['updated'] == 1): 
+        $old = isset($_GET['old']) ? $_GET['old'] : '';
+        $new = isset($_GET['new']) ? $_GET['new'] : '';
+    ?>
+      <div class="alert-success">
+        <div class="alert-icon">✓</div>
+        <div class="alert-text">
+          <strong>Department Updated</strong>
+          <span>
+            Name changed from <b><?= htmlspecialchars($old); ?></b>
+            to <b><?= htmlspecialchars($new); ?></b>.
+          </span>
+        </div>
+      </div>
+    <?php endif; ?>
+
+    <!-- Add Department Form -->
     <form class="manage-form" method="POST">
-      <input type="text"   name="department_name" placeholder="Enter Department Name" required>
-      <input type="number" name="hod_id" placeholder="HOD ID (optional)">
+      <input type="text" name="department_name" placeholder="Enter Department Name" required>
       <button type="submit">Add</button>
     </form>
 
@@ -138,9 +186,7 @@ $result = $conn->query("SELECT * FROM department ORDER BY ID ASC");
           <td><?= $i++; ?></td>
           <td><?= htmlspecialchars($row['DEPARTMENT_NAME']); ?></td>
           <td class="action-icons">
-            <!-- Edit icon (open edit page / modal if you create it) -->
             <a href="edit_department.php?id=<?= $row['ID']; ?>" class="edit" title="Edit">&#9998;</a>
-            <!-- Delete icon -->
             <a href="manage_departments.php?delete=<?= $row['ID']; ?>" class="delete"
                onclick="return confirm('Delete this department?');"
                title="Delete">

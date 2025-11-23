@@ -51,30 +51,21 @@ if (!empty($selected_subject_code)) {
                 'name' => $row['student_name'],
             ];
         }
+        $stmt->close();
     }
 }
 
 // ---------- SUMMARY CARDS (simple dynamic) ----------
-$totalClasses = 0;
-$totalStudents = 0;
-$todaysPresent = 0;
-$overallPercent = "0%";
-
-// Total classes = distinct class_id for subjects? abhi simple: count subjects
-$totalClasses = count($subjects);
-
-// My Students = unique students for selected subject (agar selected hai)
-$totalStudents = count($students);
-
-// TODO: attendance table ton calculation baad ch add karange
-$todaysPresent = 0;
-$overallPercent = "0%";
+$totalClasses    = count($subjects);       // Total subjects as classes
+$totalStudents   = count($students);       // Students in selected subject
+$todaysPresent   = 0;                      // TODO: link with attendance
+$overallPercent  = "0%";                   // TODO: link with attendance
 
 $summary = [
-    ["title" => "Total Classes", "value" => $totalClasses],
-    ["title" => "My Students", "value" => $totalStudents],
-    ["title" => "Today’s Present", "value" => $todaysPresent],
-    ["title" => "My Overall Attendance", "value" => $overallPercent]
+    ["title" => "Total Classes",          "value" => $totalClasses],
+    ["title" => "My Students",            "value" => $totalStudents],
+    ["title" => "Today’s Present",        "value" => $todaysPresent],
+    ["title" => "My Overall Attendance",  "value" => $overallPercent]
 ];
 
 $msg = $_GET['msg'] ?? '';
@@ -85,6 +76,10 @@ $msg = $_GET['msg'] ?? '';
     <meta charset="UTF-8">
     <title>Teacher Dashboard</title>
     <link rel="stylesheet" href="../assets/css/staff_dashboard.css">
+
+    <!-- 🟦 Chart.js CDN (pehle) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- 🟩 Tuhada custom JS (baad ch) -->
     <script src="../assets/js/staff_dashboard.js" defer></script>
 </head>
 
