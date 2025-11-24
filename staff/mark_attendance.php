@@ -2,7 +2,6 @@
 session_start();
 include('../includes/db_connect.php');
 
-// TODO: baad ch login ton teacher da naam / id leyo
 $teacher_name = "Demo Teacher";
 
 // ---------- GET SELECTED SUBJECT & DATE (from GET) ----------
@@ -23,10 +22,6 @@ if ($subRes && $subRes->num_rows > 0) {
 $students = [];
 
 if (!empty($selected_subject_code)) {
-    /*
-        enrollments: id, student_id, subject_code
-        student: id, roll_no, name, department, class_id
-    */
     $sqlStudents = "
         SELECT 
             st.id          AS student_id,
@@ -57,7 +52,6 @@ if (!empty($selected_subject_code)) {
 
 // ---------- LOAD ATTENDANCE FOR SELECTED DATE ----------
 $attendanceMap = [];
-$todaysPresent = 0;
 
 if (!empty($selected_subject_code) && !empty($students)) {
     $sqlAtt = "SELECT roll_no, status FROM attendance WHERE subject_code = ? AND date = ?";
@@ -68,48 +62,10 @@ if (!empty($selected_subject_code) && !empty($students)) {
         $res = $stmt->get_result();
         while ($row = $res->fetch_assoc()) {
             $attendanceMap[$row['roll_no']] = $row['status'];
-            if ($row['status'] === 'P') {
-                $todaysPresent++;
-            }
         }
         $stmt->close();
     }
 }
-
-// ---------- CALCULATE OVERALL ATTENDANCE (Simple Avg for Subject) ----------
-$overallPercent = "0%";
-if (!empty($selected_subject_code)) {
-    $sqlOverall = "SELECT status FROM attendance WHERE subject_code = ?";
-    $stmt = $conn->prepare($sqlOverall);
-    if ($stmt) {
-        $stmt->bind_param("s", $selected_subject_code);
-        $stmt->execute();
-        $res = $stmt->get_result();
-        $totalRecords = 0;
-        $totalPresent = 0;
-        while ($row = $res->fetch_assoc()) {
-            $totalRecords++;
-            if ($row['status'] === 'P') {
-                $totalPresent++;
-            }
-        }
-        if ($totalRecords > 0) {
-            $overallPercent = round(($totalPresent / $totalRecords) * 100) . "%";
-        }
-        $stmt->close();
-    }
-}
-
-// ---------- SUMMARY CARDS (simple dynamic) ----------
-$totalClasses    = count($subjects);       // Total subjects as classes
-$totalStudents   = count($students);       // Students in selected subject
-
-$summary = [
-    ["title" => "Total Classes",          "value" => $totalClasses],
-    ["title" => "My Students",            "value" => $totalStudents],
-    ["title" => "Today’s Present",        "value" => $todaysPresent],
-    ["title" => "My Overall Attendance",  "value" => $overallPercent]
-];
 
 $msg = $_GET['msg'] ?? '';
 ?>
@@ -117,13 +73,19 @@ $msg = $_GET['msg'] ?? '';
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Teacher Dashboard</title>
+    <title>Mark Attendance - Staff</title>
     <link rel="stylesheet" href="../assets/css/staff_dashboard.css">
-
-    <!-- 🟦 Chart.js CDN (pehle) -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- 🟩 Tuhada custom JS (baad ch) -->
     <script src="../assets/js/staff_dashboard.js" defer></script>
+    <style>
+        /* Minimal override for sidebar links if not present in css */
+        .sidebar ul li a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
 </head>
 
 <body>
@@ -132,8 +94,8 @@ $msg = $_GET['msg'] ?? '';
 <div class="sidebar">
     <h2>Akal University</h2>
     <ul>
-        <li class="active"><a href="staff_dashboard.php">Dashboard</a></li>
-        <li><a href="mark_attendance.php">Mark Attendance</a></li>
+        <li><a href="staff_dashboard.php">Dashboard</a></li>
+        <li class="active"><a href="mark_attendance.php">Mark Attendance</a></li>
         <li><a href="#">Defaulter List</a></li>
         <li><a href="#">Manage Users</a></li>
         <li><a href="#">Settings</a></li>
@@ -150,17 +112,7 @@ $msg = $_GET['msg'] ?? '';
         </div>
     <?php endif; ?>
 
-    <!-- SUMMARY BOXES -->
-    <div class="summary-row">
-        <?php foreach ($summary as $row): ?>
-            <div class="summary-card">
-                <h3><?= htmlspecialchars($row['title']) ?></h3>
-                <p><?= htmlspecialchars($row['value']) ?></p>
-            </div>
-        <?php endforeach; ?>
-    </div>
-
-    <h1>Welcome, <?= htmlspecialchars($teacher_name) ?>!</h1>
+    <h1>Mark Attendance</h1>
 
     <!-- SUBJECT & DATE SELECTION -->
     <div class="class-row">
@@ -196,6 +148,8 @@ $msg = $_GET['msg'] ?? '';
             <form method="POST" action="save_attendance.php">
                 <input type="hidden" name="subject_code" value="<?= htmlspecialchars($selected_subject_code) ?>">
                 <input type="hidden" name="date" value="<?= htmlspecialchars($selected_date) ?>">
+                <!-- Redirect back to this page -->
+                <input type="hidden" name="redirect_to" value="mark_attendance.php">
 
                 <table>
                     <tr>
@@ -211,7 +165,6 @@ $msg = $_GET['msg'] ?? '';
                     $count = 1;
                     foreach ($students as $s): ?>
                         <?php 
-                            // Determine status: default 'P' if not set
                             $currentStatus = $attendanceMap[$s['roll']] ?? 'P';
                         ?>
                         <tr>
@@ -219,7 +172,6 @@ $msg = $_GET['msg'] ?? '';
                             <td><?= htmlspecialchars($s['roll']) ?></td>
                             <td><?= htmlspecialchars($s['name']) ?></td>
 
-                            <!-- Radio buttons: one status per student -->
                             <td>
                                 <input type="radio" name="status[<?= htmlspecialchars($s['roll']) ?>]" value="P" <?= ($currentStatus === 'P') ? 'checked' : '' ?>>
                             </td>
@@ -240,43 +192,6 @@ $msg = $_GET['msg'] ?? '';
                 <p>No students found for this subject.</p>
             <?php endif; ?>
         <?php endif; ?>
-    </div>
-
-    <!-- QUICK REPORT (static for now) -->
-    <div class="report-section">
-        <div class="left-box">
-            <h2>Quick Class Report</h2>
-            <select>
-                <option>Select Class</option>
-                <option>UG-I Physics</option>
-                <option>UG-II Math</option>
-            </select>
-            <button class="view-report">View Full Report</button>
-
-            <canvas id="chart" width="350" height="150"></canvas>
-        </div>
-
-        <div class="right-box">
-            <h2>Students Below 75% Attendance</h2>
-            <table>
-                <tr>
-                    <th>Roll No.</th>
-                    <th>Absent</th>
-                    <th>Attendance %</th>
-                </tr>
-                <!-- TODO: future – calculate from attendance table -->
-                <tr>
-                    <td>AUID</td>
-                    <td>30</td>
-                    <td>65%</td>
-                </tr>
-                <tr>
-                    <td>AUIIID</td>
-                    <td>35</td>
-                    <td>68%</td>
-                </tr>
-            </table>
-        </div>
     </div>
 
     <footer>

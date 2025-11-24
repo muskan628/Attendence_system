@@ -21,6 +21,19 @@ if (empty($statuses)) {
     die("No attendance data received.");
 }
 
+// Ensure table exists
+$checkTable = "CREATE TABLE IF NOT EXISTS attendance (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    subject_code VARCHAR(50) NOT NULL,
+    roll_no VARCHAR(50) NOT NULL,
+    date DATE NOT NULL,
+    status CHAR(1) NOT NULL,
+    UNIQUE KEY unique_attendance (subject_code, roll_no, date)
+)";
+if (!$conn->query($checkTable)) {
+    die("Table creation failed: " . $conn->error);
+}
+
 // Prepare INSERT ... ON DUPLICATE KEY UPDATE
 $sql = "
     INSERT INTO attendance (subject_code, roll_no, date, status)
@@ -33,17 +46,21 @@ if (!$stmt) {
     die("SQL Error: " . $conn->error);
 }
 
-$stmt->bind_param("ssss", $subject_code, $roll_no, $date_db, $status);
+// Initialize variables for bind_param
+$roll_no = '';
+$status_val = '';
+$date_db = $date; 
 
-$date_db = $date; // assuming input is YYYY-mm-dd
+// Bind parameters
+$stmt->bind_param("ssss", $subject_code, $roll_no, $date_db, $status_val);
 
-foreach ($statuses as $roll_no => $status) {
-    $status = strtoupper(trim($status));
-    if (!in_array($status, ['P','A','L'])) {
-        $status = 'P';
+foreach ($statuses as $r_no => $stat) {
+    $status_val = strtoupper(trim($stat));
+    if (!in_array($status_val, ['P','A','L'])) {
+        $status_val = 'P';
     }
 
-    $roll_no = trim($roll_no);
+    $roll_no = trim($r_no);
 
     $stmt->execute();
 }
@@ -51,8 +68,10 @@ foreach ($statuses as $roll_no => $status) {
 $stmt->close();
 
 // Redirect back to staff dashboard with message + same subject/date
+// Redirect back
+$redirect_to = $_POST['redirect_to'] ?? 'staff_dashboard.php';
 header(
-    "Location: staff_dashboard.php?msg=success&subject=" .
+    "Location: " . $redirect_to . "?msg=success&subject=" .
     urlencode($subject_code) .
     "&date=" . urlencode($date)
 );
