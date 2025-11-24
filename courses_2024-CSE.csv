@@ -1,0 +1,105 @@
+Sr. No.,Department,Program,Course Name,Course Code,Course Type,Theory Credits,Practical Credits,Internal,MCQ,Theory,Created At
+1,Computer Science and Engineering,UG,Advance Graph Theory,CSE05E602,DSE,3.0,,30.0,20.0,50.0,2024-12-13 23:15:52
+2,Computer Science and Engineering,UG,Advanced Machine Learning,CSE05C403,Core,3.0,,30.0,20.0,50.0,2024-12-12 03:10:55
+3,Computer Science and Engineering,UG,Advanced Statistical Foundation for Data Science,CSE05C306,Core,3.0,,20.0,20.0,60.0,2024-12-12 03:01:30
+4,Computer Science and Engineering,UG,AI,CSE05C601,Core,4.0,,20.0,20.0,60.0,2025-01-22 05:07:16
+5,Computer Science and Engineering,UG,AI,CSN05C401,Core,4.0,,20.0,20.0,60.0,2025-01-22 05:09:49
+6,Computer Science and Engineering,UG,Artificial Intelligence,CSE05C601,Core,3.0,1.0,30.0,20.0,50.0,2024-12-13 02:42:34
+7,Computer Science and Engineering,UG,Artificial Intelligence (For students of BCA (H) in Al ML,CSN05C401,SEC,3.0,,40.0,,60.0,2024-08-08 04:00:01
+8,Computer Science and Engineering,UG,Basic Mathematics,CSN-05GX01,GE,4.0,,20.0,20.0,60.0,2024-08-08 03:18:39
+9,Computer Science and Engineering,UG,Big Data Analytics (For students of BCA (H) in Data Analytics),CSN05C502,DSE,3.0,2.0,20.0,20.0,60.0,2024-08-23 03:15:14
+10,Computer Science and Engineering,UG,Big Data Technologies,CSE05C701,Core,3.0,1.0,30.0,20.0,50.0,2024-12-13 23:18:00
+11,Computer Science and Engineering,UG,Bioinformatics,CSE05C703,Core,3.0,,30.0,20.0,50.0,2024-12-13 23:29:09
+12,Computer Science and Engineering,UG,Business Intelligence,CSE05E503,DSE,3.0,,30.0,20.0,50.0,2024-12-13 01:16:07
+13,Computer Science and Engineering,UG,Business Managenr,xxxxxx,Core,4.0,,20.0,20.0,60.0,2025-02-07 04:44:25
+14,Computer Science and Engineering,UG,Capstone Project,CSN05K501,Core,4.0,,40.0,,60.0,2024-08-08 04:12:39
+15,Computer Science and Engineering,UG,Capstone Project-I,CSE05K601,PROJECT,,3.0,,,,2024-12-13 23:11:48
+16,Computer Science and Engineering,UG,Capstone Project-II,CSE05K701,PROJECT,,3.0,,,,2024-12-13 23:30:28
+17,Computer Science and Engineering,UG,Cloud Computing,CSE05C603,Core,,3.0,,,,2024-12-13 23:10:15
+18,Computer Science and Engineering,UG,Communication Skill,CSE05A103,AECC,2.0,,30.0,20.0,50.0,2024-12-10 01:14:29
+19,Computer Science and Engineering,UG,Computer Organization & Design,CSE05C203,Core,3.0,,30.0,20.0,50.0,2024-12-10 01:27:58
+20,Computer Science and Engineering,UG,Computer Problem Solving,CSE05C101,Core,3.0,1.0,30.0,20.0,50.0,2024-12-10 01:10:07
+21,Computer Science and Engineering,UG,Computer System Architecture,CSN05C204,Core,4.0,,30.0,20.0,50.0,2024-08-08 03:26:21
+22,Computer Science and Engineering,UG,Cyber Security,CSN05GX02,GE,3.0,,20.0,20.0,60.0,2024-08-08 03:28:25
+23,Computer Science and Engineering,UG,Data Base Management System,CSE05C201,Core,4.0,2.0,20.0,20.0,60.0,2025-01-22 05:04:52
+24,Computer Science and Engineering,UG,Data Communication and Networking,CSN05C204,Core,3.0,2.0,30.0,20.0,50.0,2024-08-08 03:57:45
+25,Computer Science and Engineering,UG,Data Communication and Networking,CSN05C404,Core,3.0,2.0,30.0,20.0,60.0,2025-01-23 23:42:10
+26,Computer Science and Engineering,UG,Data Handling and Visualization,CSE05C503,Core,3.0,,30.0,20.0,50.0,2024-12-13 01:13:30
+27,Computer Science and Engineering,UG,Data Mining (For students of BCA (H ) in Data Analytics,CSN05C402,SEC,3.0,,40.0,,60.0,2024-08-08 04:01:39
+28,Computer Science and Engineering,UG,Data Structures,CSN05C301,Core,4.0,2.0,30.0,20.0,50.0,2024-08-08 03:33:42
+29,Computer Science and Engineering,UG,Data Structures,CSE05C302,Core,3.0,1.0,20.0,20.0,50.0,2024-12-12 02:56:56
+30,Computer Science and Engineering,UG,Database Management Systems,CSN05C201,Core,4.0,2.0,30.0,20.0,50.0,2024-08-08 03:21:42
+31,Computer Science and Engineering,UG,Deep Learning (For students of BCA (H) in AI ML),CSN05C501,DSE,3.0,2.0,20.0,20.0,60.0,2024-08-23 03:14:09
+32,Computer Science and Engineering,UG,Design & Analysis of Algorithms,CSE05C401,Core,3.0,1.0,20.0,30.0,50.0,2024-12-12 03:05:07
+33,Computer Science and Engineering,UG,DevOps,CSE05C702,Core,,3.0,,,,2024-12-13 23:19:22
+34,Computer Science and Engineering,UG,Digital electronics,CSN05C102,Core,4.0,,30.0,20.0,50.0,2024-08-11 23:22:49
+35,Computer Science and Engineering,UG,Digital Image Processing,CSE05E504,DSE,,3.0,,,,2024-12-13 01:58:10
+36,Computer Science and Engineering,UG,Discrete Mathematics,CSE05C504,Core,3.0,,20.0,20.0,60.0,2024-12-13 01:14:11
+37,Computer Science and Engineering,UG,Discrete Mathematies,CSN050C403,Core,4.0,,30.0,20.0,60.0,2024-08-08 03:56:04
+38,Computer Science and Engineering,UG,Ecology and Environment,CCE05GX02,GE,3.0,,20.0,20.0,60.0,2024-08-08 03:29:47
+39,Computer Science and Engineering,UG,Ecology and Environment,CSE05K403,SEC,1.0,,30.0,20.0,50.0,2024-12-13 01:09:55
+40,Computer Science and Engineering,UG,Engineering Chemistry,CSE05A102,AECC,3.0,1.0,20.0,20.0,60.0,2024-12-10 01:13:36
+41,Computer Science and Engineering,UG,Engineering Ethics,CSE05K401,SEC,1.0,,30.0,20.0,50.0,2024-12-13 01:08:45
+42,Computer Science and Engineering,UG,Engineering Mathematics,CSE05C102,Core,3.0,,20.0,20.0,60.0,2024-12-10 01:10:38
+43,Computer Science and Engineering,UG,Engineering Physics,CSE05B101,Core,4.0,2.0,20.0,20.0,60.0,2024-12-10 01:03:51
+44,Computer Science and Engineering,UG,Engineering Physics,CSE05A101,AECC,3.0,1.0,20.0,20.0,50.0,2024-12-10 01:12:29
+45,Computer Science and Engineering,UG,English Reading and Writing,AEC05AX04,AECC,4.0,,20.0,20.0,60.0,2025-01-23 23:33:31
+46,Computer Science and Engineering,UG,Environment,xxxxxx,Core,4.0,,20.0,20.0,60.0,2025-02-17 07:59:10
+47,Computer Science and Engineering,UG,Environment Studies,AEC05AX02,AECC,4.0,,20.0,20.0,60.0,2024-08-08 03:16:00
+48,Computer Science and Engineering,UG,Financial Markets,CSE05K303,SEC,3.0,,20.0,30.0,50.0,2024-12-12 03:03:58
+49,Computer Science and Engineering,UG,Foundations of Computer Science,CSN05C103,Core,4.0,,30.0,20.0,50.0,2024-08-08 03:12:48
+50,Computer Science and Engineering,UG,Fundamentals of Business Analytics,CSE05K301,SEC,3.0,,20.0,30.0,50.0,2024-12-12 03:02:36
+51,Computer Science and Engineering,UG,Fundamentals of Python,CSE05C204,Core,3.0,1.0,30.0,20.0,50.0,2024-12-10 01:28:45
+52,Computer Science and Engineering,UG,General Psychology,PSY05GX01,GE,4.0,,20.0,20.0,60.0,2024-08-08 03:43:22
+53,Computer Science and Engineering,UG,Guru Granth Sahib & Divine Music,SGGS04CS401,GE,4.0,,20.0,20.0,60.0,2024-08-08 04:04:51
+54,Computer Science and Engineering,UG,Healthcare Data Analytics,CSE05E702,DSE,3.0,,30.0,20.0,50.0,2024-12-13 23:31:58
+55,Computer Science and Engineering,UG,High Performance Computing,CSE05E703,DSE,3.0,,30.0,20.0,50.0,2024-12-13 23:32:27
+56,Computer Science and Engineering,UG,Information Technology Tools and Network Basic,CSN05C304E,GE,2.0,,20.0,20.0,60.0,2024-08-08 03:45:15
+57,Computer Science and Engineering,UG,Introduction to Web Technology,CSN-05GX02,GE,4.0,,20.0,20.0,60.0,2024-08-08 03:19:33
+58,Computer Science and Engineering,UG,Introductory Statistics for Data Science,CSE05B202,Core,4.0,,20.0,20.0,60.0,2025-01-22 05:04:21
+59,Computer Science and Engineering,UG,Machine Learning,CSN05C303,Core,4.0,2.0,30.0,20.0,50.0,2024-08-08 03:36:42
+60,Computer Science and Engineering,UG,Machine Learning,CSE05C305,Core,3.0,1.0,30.0,20.0,50.0,2024-12-12 03:00:49
+61,Computer Science and Engineering,UG,Mathematics for Data Science/AI-ML/Cyber Security,CSE05B201,Core,4.0,,20.0,20.0,60.0,2025-01-22 05:05:34
+62,Computer Science and Engineering,UG,Mobile App Development,CSN05K402,SEC,3.0,,40.0,,60.0,2024-08-08 04:03:56
+63,Computer Science and Engineering,UG,Mobile App Development,CSE05C502,Core,3.0,,40.0,,,2024-12-13 01:12:47
+64,Computer Science and Engineering,UG,NCC-1,NCC-05GX01,GE,4.0,2.0,20.0,20.0,60.0,2024-08-08 03:17:34
+65,Computer Science and Engineering,UG,NCC-5,NCC05GX04,GE,4.0,2.0,20.0,20.0,60.0,2024-08-08 04:15:05
+66,Computer Science and Engineering,UG,NCC-II,NCC05GX02,GE,4.0,2.0,20.0,20.0,60.0,2024-08-08 03:30:39
+67,Computer Science and Engineering,UG,NCC-III,NCC05GX03,GE,2.0,2.0,20.0,20.0,60.0,2024-08-08 03:46:32
+68,Computer Science and Engineering,UG,NCC-IV,NCC05GX04,GE,2.0,2.0,20.0,20.0,60.0,2024-08-08 04:07:03
+69,Computer Science and Engineering,UG,NCC-VI,NCC05GX06,GE,4.0,2.0,20.0,20.0,60.0,2024-08-09 01:42:10
+70,Computer Science and Engineering,UG,New Startup(provision provided by incubation cell AU),CSN05E603,SEC,5.0,,20.0,20.0,60.0,2024-08-09 01:41:16
+71,Computer Science and Engineering,UG,New Startup(provision provided by incubation cell AU),CSN05E603,DSE,12.0,,100.0,,50.0,2024-08-23 03:18:33
+72,Computer Science and Engineering,UG,Numerical Analysis,CSE05C602,Core,3.0,,20.0,20.0,60.0,2024-12-13 23:08:36
+73,Computer Science and Engineering,UG,Object Oriennted Programming,CSE05C203,Core,4.0,2.0,20.0,20.0,60.0,2025-01-22 05:06:36
+74,Computer Science and Engineering,UG,Object Oriented Analysis and Design,CSE05E502,DSE,3.0,,30.0,20.0,50.0,2024-12-13 01:15:37
+75,Computer Science and Engineering,UG,Object Oriented Programming,CSN05K302,SEC,2.0,,40.0,,60.0,2024-08-08 03:39:52
+76,Computer Science and Engineering,UG,Object Oriented Programming,CSE05C202,Core,3.0,1.0,30.0,20.0,50.0,2024-12-10 01:27:15
+77,Computer Science and Engineering,UG,Office Automation Lab,CSN05C104,Core,3.0,,,,60.0,2024-08-08 03:15:03
+78,Computer Science and Engineering,UG,Operating System,CSN05C302,Core,4.0,2.0,30.0,20.0,50.0,2024-08-08 03:34:50
+79,Computer Science and Engineering,UG,Operating System,CSE05C303,Core,3.0,,30.0,20.0,50.0,2024-12-12 02:57:54
+80,Computer Science and Engineering,UG,Physics Laboratory-IV,Xxxxx,LAB,,2.0,,,,2025-02-10 06:20:20
+81,Computer Science and Engineering,UG,Problem Solving & Programming,CSE05S101,Core,3.0,1.0,30.0,20.0,50.0,2024-12-10 01:02:20
+82,Computer Science and Engineering,UG,Problem Solving and Programming,CSN05C101,Core,3.0,2.0,30.0,20.0,50.0,2024-08-11 23:21:50
+83,Computer Science and Engineering,UG,Project and industrial training,CSN05E601,SEC,5.0,,20.0,20.0,60.0,2024-08-09 01:36:50
+84,Computer Science and Engineering,UG,Project and industrial training,CSN05E601,DSE,12.0,,100.0,,50.0,2024-08-23 03:17:00
+85,Computer Science and Engineering,UG,Python for Data Science,CSE05C301,Core,3.0,1.0,20.0,,60.0,2024-12-12 02:55:23
+86,Computer Science and Engineering,UG,Python Programming,CSN05C202,Core,4.0,2.0,30.0,20.0,50.0,2024-08-08 03:23:10
+87,Computer Science and Engineering,UG,Research based Internship,CSN05E602,SEC,5.0,,20.0,20.0,60.0,2024-08-09 01:40:17
+88,Computer Science and Engineering,UG,Research based Internship,CSN05E602,DSE,12.0,,100.0,,50.0,2024-08-23 03:17:45
+89,Computer Science and Engineering,UG,Secure Coding,CSE05E501,DSE,3.0,,30.0,20.0,50.0,2024-12-13 01:15:05
+90,Computer Science and Engineering,UG,Social and Cultural History of India,CCE05GX04,GE,4.0,,20.0,20.0,60.0,2024-08-08 04:05:36
+91,Computer Science and Engineering,UG,Social Media Analytics,CSE05E701,DSE,3.0,,30.0,20.0,50.0,2024-12-13 23:31:16
+92,Computer Science and Engineering,UG,Soft Computing,CSE05E601,DSE,3.0,,30.0,20.0,50.0,2024-12-13 23:12:31
+93,Computer Science and Engineering,UG,Software Engineering,CSN05C503,Core,4.0,2.0,30.0,20.0,50.0,2024-08-08 04:11:45
+94,Computer Science and Engineering,UG,Software Engineering,CSE05C402,Core,3.0,,20.0,30.0,50.0,2024-12-12 03:05:53
+95,Computer Science and Engineering,UG,Specialization Specific Core-i$,CSN050C401,Core,4.0,2.0,30.0,20.0,50.0,2024-08-08 03:54:57
+96,Computer Science and Engineering,UG,Specialization Specific Core-II $,CSN05C501,Core,4.0,,20.0,30.0,50.0,2024-08-08 04:10:03
+97,Computer Science and Engineering,UG,Statistical Foundation of Computer Science,CSN05C203,Core,5.0,,30.0,20.0,50.0,2024-08-08 03:24:24
+98,Computer Science and Engineering,UG,Statistical Foundation of Data  Science,CSE05C206,Core,3.0,,20.0,20.0,60.0,2024-12-12 02:51:22
+99,Computer Science and Engineering,UG,Statistical Foundation of Data Science,CSE05C206,AECC,3.0,,20.0,20.0,60.0,2024-12-10 01:32:29
+100,Computer Science and Engineering,UG,Theory of Computation,CSE05C501,Core,3.0,,30.0,20.0,50.0,2024-12-13 01:11:52
+101,Computer Science and Engineering,UG,Universal Human Values,CSE05K402,SEC,1.0,,30.0,20.0,50.0,2024-12-13 01:09:17
+102,Computer Science and Engineering,UG,Web Designing,CSN05K301,SEC,4.0,,40.0,,60.0,2024-08-08 03:37:53
+103,Computer Science and Engineering,UG,Web Development,CSN05K401,SEC,3.0,,40.0,,60.0,2024-08-08 04:03:00
+104,Computer Science and Engineering,UG,Web Intelligence,CSE05E603,DSE,3.0,,30.0,20.0,50.0,2024-12-13 23:16:25

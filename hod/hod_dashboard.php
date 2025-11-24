@@ -108,7 +108,7 @@ $classFilterOptions = array_unique($classFilterOptions);
 // Later: attendance_summary table ya view ton data
 $defaulters = [];   // hune empty rakheya
 
-// Optional: import subjects success message
+// Optional: import subject success message
 $status  = $_GET['status'] ?? '';
 $count   = isset($_GET['count']) ? (int)$_GET['count'] : 0;
 ?>
@@ -140,7 +140,7 @@ $count   = isset($_GET['count']) ? (int)$_GET['count'] : 0;
     <h1>HOD Dashboard (<?= htmlspecialchars($hod_department) ?>)</h1>
 
     <!-- OPTIONAL IMPORT SUCCESS -->
-    <?php if ($status === 'subjects_imported'): ?>
+    <?php if ($status === 'subject_imported'): ?>
         <div class="alert-success">
             ✅ <?= $count ?> subject(s) imported successfully.
         </div>
@@ -248,14 +248,68 @@ $count   = isset($_GET['count']) ? (int)$_GET['count'] : 0;
         <h2>Import Subject Details</h2>
         <p>Upload subject_details CSV file.</p>
 
-        <form method="POST" enctype="multipart/form-data" action="import_subjects.php">
+        <form method="POST" enctype="multipart/form-data" action="import_subjects.php" id="importForm">
             <label class="upload-box">
-                <input type="file" name="csv_file" accept=".csv" required>
-                <span class="upload-text">Click to Upload CSV</span>
+                <input type="file" name="csv_file" accept=".csv, .xlsx, .xls" required id="fileInput">
+                <span class="upload-text">Click to Upload CSV or Excel</span>
             </label>
 
-            <button type="submit" class="btn-primary">Upload &amp; Import</button>
+            <!-- hidden or button name = import -->
+            <button type="submit" name="import" value="1" class="btn-primary">
+                Upload &amp; Import
+            </button>
         </form>
+    </div>
+</div>
+
+<!-- SheetJS for Excel to CSV conversion -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+document.getElementById('importForm').addEventListener('submit', function(e) {
+    const fileInput = document.getElementById('fileInput');
+    const file = fileInput.files[0];
+    
+    if (!file) return;
+
+    const fileName = file.name.toLowerCase();
+    if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+        e.preventDefault(); // Stop form submission to convert file
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, {type: 'array'});
+            
+            // Get first sheet
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+            
+            // Convert to CSV
+            const csvOutput = XLSX.utils.sheet_to_csv(worksheet);
+            
+            // Create a new Blob and File
+            const blob = new Blob([csvOutput], {type: 'text/csv'});
+            const newFile = new File([blob], "converted_courses.csv", {type: "text/csv"});
+            
+            // Create a DataTransfer to update the file input
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(newFile);
+            fileInput.files = dataTransfer.files;
+            
+            // Now submit the form programmatically
+            // We need to remove the submit listener or use a flag to prevent infinite loop, 
+            // but since we replaced the file, the check (endsWith .xlsx) might fail if we checked the new file.
+            // However, the file input value is now a .csv file (in memory at least for submission), 
+            // but the file input value visible to user might not change easily or we just submit.
+            // Actually, simply submitting the form now that the input has a CSV file is enough.
+            // But wait, 'submit()' on form element doesn't trigger 'submit' event listeners.
+            document.getElementById('importForm').submit();
+        };
+        reader.readAsArrayBuffer(file);
+    }
+});
+</script>
+
     </div>
    
 
