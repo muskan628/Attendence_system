@@ -46,10 +46,10 @@ $programOptions = [];
 if (!empty($currentDept)) {
     // Use real_escape_string to avoid SQL injection and avoid prepare problems
     $deptEscaped = $conn->real_escape_string($currentDept);
-    $resProg = $conn->query("SELECT program_name FROM department WHERE department_name = '{$deptEscaped}' ORDER BY program_name");
+    $resProg = $conn->query("SELECT program FROM department WHERE department_name = '{$deptEscaped}' ORDER BY program");
     if ($resProg) {
         while ($r = $resProg->fetch_assoc()) {
-            $programOptions[] = $r['program_name'];
+            $programOptions[] = $r['program'];
         }
     } else {
         $prog_load_error = "Failed to load programs: " . $conn->error;
