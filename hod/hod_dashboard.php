@@ -254,8 +254,10 @@ $count   = isset($_GET['count']) ? (int)$_GET['count'] : 0;
                 <span class="upload-text">Click to Upload CSV or Excel</span>
             </label>
 
-            <!-- hidden or button name = import -->
-            <button type="submit" name="import" value="1" class="btn-primary">
+            <!-- hidden input to ensure $_POST['import'] is sent even via JS submit -->
+            <input type="hidden" name="import" value="1">
+            
+            <button type="submit" class="btn-primary">
                 Upload &amp; Import
             </button>
         </form>

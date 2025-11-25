@@ -11,7 +11,7 @@ $selected_date         = $_GET['date'] ?? date('Y-m-d');
 
 // ---------- SUBJECTS DROPDOWN DATA ----------
 $subjects = [];
-$subSql = "SELECT course_code AS code, subject_name AS name FROM subject_details ORDER BY course_code";
+$subSql = "SELECT code, name FROM subjects ORDER BY code";
 $subRes = $conn->query($subSql);
 if ($subRes && $subRes->num_rows > 0) {
     while ($row = $subRes->fetch_assoc()) {
@@ -132,11 +132,11 @@ $msg = $_GET['msg'] ?? '';
 <div class="sidebar">
     <h2>Akal University</h2>
     <ul>
-        <li class="active"><a href="staff_dashboard.php">Dashboard</a></li>
-        <li><a href="mark_attendance.php">Mark Attendance</a></li>
-        <li><a href="#">Defaulter List</a></li>
-        <li><a href="#">Manage Users</a></li>
-        <li><a href="#">Settings</a></li>
+        <li class="active">Dashboard</li>
+        <li>Mark Attendance</li>
+        <li>Defaulter List</li>
+        <li>Manage Users</li>
+        <li>Settings</li>
     </ul>
 </div>
 
