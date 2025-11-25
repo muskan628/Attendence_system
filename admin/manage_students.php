@@ -19,7 +19,7 @@ $filter_dept  = $_GET['filter_dept']  ?? '';
 
 /* ----------------- 2) LOAD DEPARTMENTS FOR DROPDOWN ----------------- */
 $deptOptions = [];
-$resDept = $conn->query("SELECT DISTINCT department_name FROM departments ORDER BY department_name");
+$resDept = $conn->query("SELECT DISTINCT department_name FROM department ORDER BY department_name");
 if ($resDept && $resDept->num_rows > 0) {
     while ($row = $resDept->fetch_assoc()) {
         $deptOptions[] = $row['department_name'];
