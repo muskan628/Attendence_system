@@ -5,7 +5,7 @@ include('../includes/db_connect.php');
 // TODO: baad ch login ton teacher da naam / id leyo
 $teacher_name = "Demo Teacher";
 
-// ---------- GET SELECTED SUBJECT & DATE (from GET) ----------
+// ---------- GET SELECTED subject_details_details_details & DATE (from GET) ----------
 $selected_subject_code = $_GET['subject'] ?? '';
 $selected_date         = $_GET['date'] ?? date('Y-m-d');
 
