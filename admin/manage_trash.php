@@ -198,6 +198,24 @@ $trashDepts    = $conn->query("SELECT * FROM trash_department ORDER BY id DESC")
     </style>
 </head>
 <body>
+<div class="sidebar">
+    <h2>Akal University</h2>
+    <ul>
+        <li onclick="window.location.href='ad_dashboard.php'">Dashboard</li>
+        <li>Detailed Reports</li>
+        <li>Defaulter List</li>
+        <li>Manage Users</li>
+        <li onclick="window.location.href='manage_students.php'">Manage Students</li>
+        <li onclick="window.location.href='manage_departments.php'">Manage Departments</li>
+        <li class="active" onclick="window.location.href='settings.php'">Settings</li>
+    </ul>
+    
+    <!-- Logout Button -->
+    <div class="logout-box">
+        <a href="../logout.php" class="logout-btn">Logout</a>
+    </div>
+</div>
+
 <div class="main">
     <div class="trash-wrapper">
         <div class="trash-header">

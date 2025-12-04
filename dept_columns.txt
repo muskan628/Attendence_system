@@ -1,0 +1,12 @@
+Columns in 'department' table:
+id
+DEPARTMENT_NAME
+Hod_id
+
+First row keys:
+Array
+(
+    [0] => id
+    [1] => DEPARTMENT_NAME
+    [2] => Hod_id
+)

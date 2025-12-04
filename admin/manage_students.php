@@ -114,13 +114,16 @@ $result = $stmt->get_result();
 <div class="sidebar">
     <h2>Akal University</h2>
     <ul>
-        <li><a href="admin_dashboard.php">Dashboard</a></li>
-        <li><a href="detailed_reports.php">Detailed Reports</a></li>
-        <li><a href="defaulter_list.php">Defaulter List</a></li>
-        <li class="active"><a href="manage_students.php">Manage Students</a></li>
-        <li><a href="manage_users.php">Manage Users</a></li>
-        <li><a href="settings.php">Settings</a></li>
+        <li onclick="window.location.href='ad_dashboard.php'">Dashboard</li>
+        <li>Detailed Reports</li>
+        <li>Defaulter List</li>
+        <li>Manage Users</li>
+        <li class="active">Manage Students</li>
+        <li onclick="window.location.href='manage_departments.php'">Manage Departments</li>
+        <li onclick="window.location.href='settings.php'">Settings</li>
     </ul>
+    
+    <!-- Logout Button -->
     <div class="logout-box">
         <a href="../logout.php" class="logout-btn">Logout</a>
     </div>

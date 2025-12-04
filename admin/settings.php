@@ -101,6 +101,24 @@ include('../includes/session_check.php');
 </head>
 <body>
 
+<div class="sidebar">
+    <h2>Akal University</h2>
+    <ul>
+        <li onclick="window.location.href='ad_dashboard.php'">Dashboard</li>
+        <li>Detailed Reports</li>
+        <li>Defaulter List</li>
+        <li>Manage Users</li>
+        <li onclick="window.location.href='manage_students.php'">Manage Students</li>
+        <li onclick="window.location.href='manage_departments.php'">Manage Departments</li>
+        <li class="active">Settings</li>
+    </ul>
+    
+    <!-- Logout Button -->
+    <div class="logout-box">
+        <a href="../logout.php" class="logout-btn">Logout</a>
+    </div>
+</div>
+
 <div class="main">
   <div class="settings-wrapper">
     <div class="settings-header">

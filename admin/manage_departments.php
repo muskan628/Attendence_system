@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['department_name'])) {
     $name = trim($_POST['department_name']);
 
     if ($name !== '') {
-        $stmt = $conn->prepare("INSERT INTO department (DEPARTMENT_NAME) VALUES (?)");
+        $stmt = $conn->prepare("INSERT INTO department (name) VALUES (?)");
         if (!$stmt) {
             die("Prepare failed: " . $conn->error);
         }
@@ -22,13 +22,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['department_name'])) {
 /* ---------- DELETE ---------- */
 if (isset($_GET['delete'])) {
     $id = (int)$_GET['delete'];
-    $conn->query("DELETE FROM department WHERE ID = $id");
+    $conn->query("DELETE FROM department WHERE id = $id");
     header("Location: manage_departments.php");
     exit();
 }
 
 /* ---------- FETCH LIST ---------- */
-$result = $conn->query("SELECT * FROM department ORDER BY ID ASC");
+$result = $conn->query("SELECT * FROM department ORDER BY id ASC");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -142,6 +142,24 @@ $result = $conn->query("SELECT * FROM department ORDER BY ID ASC");
 </head>
 <body>
 
+<div class="sidebar">
+    <h2>Akal University</h2>
+    <ul>
+        <li onclick="window.location.href='ad_dashboard.php'">Dashboard</li>
+        <li>Detailed Reports</li>
+        <li>Defaulter List</li>
+        <li>Manage Users</li>
+        <li onclick="window.location.href='manage_students.php'">Manage Students</li>
+        <li class="active">Manage Departments</li>
+        <li onclick="window.location.href='settings.php'">Settings</li>
+    </ul>
+    
+    <!-- Logout Button -->
+    <div class="logout-box">
+        <a href="../logout.php" class="logout-btn">Logout</a>
+    </div>
+</div>
+
 <div class="main">
   <div class="manage-wrapper">
     <div class="manage-header">
@@ -184,13 +202,13 @@ $result = $conn->query("SELECT * FROM department ORDER BY ID ASC");
       while ($row = $result->fetch_assoc()): ?>
         <tr>
           <td><?= $i++; ?></td>
-          <td><?= htmlspecialchars($row['DEPARTMENT_NAME']); ?></td>
+          <td><?= htmlspecialchars($row['name']); ?></td>
           <td class="action-icons">
-            <a href="edit_department.php?id=<?= $row['ID']; ?>" class="edit" title="Edit">&#9998;</a>
-            <a href="manage_departments.php?delete=<?= $row['ID']; ?>" class="delete"
+            <a href="edit_department.php?id=<?= $row['id']; ?>" class="edit" title="Edit">Edit</a>
+            <a href="manage_departments.php?delete=<?= $row['id']; ?>" class="delete"
                onclick="return confirm('Delete this department?');"
                title="Delete">
-               &#128465;
+               Delete
             </a>
           </td>
         </tr>

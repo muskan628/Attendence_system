@@ -85,6 +85,106 @@ while (($row = fgetcsv($handle)) !== false) {
 
 fclose($handle);
 
-echo "<h3>$inserted student records imported successfully!</h3>";
-echo '<p><a href="admin_dashboard.php">Back to Dashboard</a></p>';
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Import Status</title>
+    <link rel="stylesheet" href="../assets/css/admin_dashboard.css">
+    <style>
+        .success-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80vh;
+        }
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            animation: fadeIn 0.5s ease-out;
+        }
+        .icon-circle {
+            width: 80px;
+            height: 80px;
+            background: #e8f5e9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+        .check-icon {
+            color: #4caf50;
+            font-size: 40px;
+        }
+        h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #4caf50;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>Akal University</h2>
+    <ul>
+        <li onclick="window.location.href='ad_dashboard.php'">Dashboard</li>
+        <li>Detailed Reports</li>
+        <li>Defaulter List</li>
+        <li>Manage Users</li>
+        <li onclick="window.location.href='manage_students.php'">Manage Students</li>
+        <li onclick="window.location.href='manage_departments.php'">Manage Departments</li>
+        <li onclick="window.location.href='settings.php'">Settings</li>
+    </ul>
+    
+    <!-- Logout Button -->
+    <div class="logout-box">
+        <a href="../logout.php" class="logout-btn">Logout</a>
+    </div>
+</div>
+
+<div class="main">
+    <div class="success-wrapper">
+        <div class="card">
+            <div class="icon-circle">
+                <span class="check-icon">✓</span>
+            </div>
+            <h3>Success!</h3>
+            <p><?php echo $inserted; ?> student records imported successfully.</p>
+            <a href="ad_dashboard.php" class="btn">Back to Dashboard</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
