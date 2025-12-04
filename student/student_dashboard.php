@@ -44,6 +44,9 @@ $courses = [
         <li>Course Schedule</li>
         <li>Profile</li>
     </ul>
+
+    <!-- Logout Button -->
+    <?php include '../includes/logout_button.php'; ?>
 </div>
 
 <!-- MAIN AREA -->
