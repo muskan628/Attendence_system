@@ -7,11 +7,11 @@ $teacher_name = "Demo Teacher";
 
 // ---------- GET SELECTED subject_details_details_details & DATE (from GET) ----------
 $selected_subject_code = $_GET['subject'] ?? '';
-$selected_date         = $_GET['date'] ?? date('Y-m-d');
+$selected_date = $_GET['date'] ?? date('Y-m-d');
 
 // ---------- SUBJECTS DROPDOWN DATA ----------
 $subjects = [];
-$subSql = "SELECT code, name FROM subjects ORDER BY code";
+$subSql = "SELECT course_code AS code, subject_name AS name FROM subject_details ORDER BY course_code";
 $subRes = $conn->query($subSql);
 if ($subRes && $subRes->num_rows > 0) {
     while ($row = $subRes->fetch_assoc()) {
@@ -46,7 +46,7 @@ if (!empty($selected_subject_code)) {
 
         while ($row = $result->fetch_assoc()) {
             $students[] = [
-                'id'   => $row['student_id'],
+                'id' => $row['student_id'],
                 'roll' => $row['roll_no'],
                 'name' => $row['student_name'],
             ];
@@ -101,20 +101,21 @@ if (!empty($selected_subject_code)) {
 }
 
 // ---------- SUMMARY CARDS (simple dynamic) ----------
-$totalClasses    = count($subjects);       // Total subjects as classes
-$totalStudents   = count($students);       // Students in selected subject
+$totalClasses = count($subjects);       // Total subjects as classes
+$totalStudents = count($students);       // Students in selected subject
 
 $summary = [
-    ["title" => "Total Classes",          "value" => $totalClasses],
-    ["title" => "My Students",            "value" => $totalStudents],
-    ["title" => "Today’s Present",        "value" => $todaysPresent],
-    ["title" => "My Overall Attendance",  "value" => $overallPercent]
+    ["title" => "Total Classes", "value" => $totalClasses],
+    ["title" => "My Students", "value" => $totalStudents],
+    ["title" => "Today’s Present", "value" => $todaysPresent],
+    ["title" => "My Overall Attendance", "value" => $overallPercent]
 ];
 
 $msg = $_GET['msg'] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Teacher Dashboard</title>
@@ -128,162 +129,165 @@ $msg = $_GET['msg'] ?? '';
 
 <body>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-    <h2>Akal University</h2>
-    <ul>
-        <li class="active">Dashboard</li>
-        <li>Mark Attendance</li>
-        <li>Defaulter List</li>
-        <li>Manage Users</li>
-        <li>Settings</li>
-    </ul>
-</div>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h2>Akal University</h2>
+        <ul>
+            <li class="active">Dashboard</li>
+            <li>Mark Attendance</li>
+            <li>Defaulter List</li>
+            <li>Manage Users</li>
+            <li>Settings</li>
+        </ul>
+    </div>
 
-<!-- MAIN AREA -->
-<div class="main">
+    <!-- MAIN AREA -->
+    <div class="main">
 
-    <!-- Optional success message -->
-    <?php if ($msg === 'success'): ?>
-        <div class="alert success">
-            Attendance saved successfully!
-        </div>
-    <?php endif; ?>
-
-    <!-- SUMMARY BOXES -->
-    <div class="summary-row">
-        <?php foreach ($summary as $row): ?>
-            <div class="summary-card">
-                <h3><?= htmlspecialchars($row['title']) ?></h3>
-                <p><?= htmlspecialchars($row['value']) ?></p>
+        <!-- Optional success message -->
+        <?php if ($msg === 'success'): ?>
+            <div class="alert success">
+                Attendance saved successfully!
             </div>
-        <?php endforeach; ?>
-    </div>
+        <?php endif; ?>
 
-    <h1>Welcome, <?= htmlspecialchars($teacher_name) ?>!</h1>
+        <!-- SUMMARY BOXES -->
+        <div class="summary-row">
+            <?php foreach ($summary as $row): ?>
+                <div class="summary-card">
+                    <h3><?= htmlspecialchars($row['title']) ?></h3>
+                    <p><?= htmlspecialchars($row['value']) ?></p>
+                </div>
+            <?php endforeach; ?>
+        </div>
 
-    <!-- SUBJECT & DATE SELECTION -->
-    <div class="class-row">
-        <form method="GET" action="">
-            <label>Select Subject & Date</label>
+        <h1>Welcome, <?= htmlspecialchars($teacher_name) ?>!</h1>
 
-            <select name="subject" required>
-                <option value="">-- Select Subject --</option>
-                <?php foreach ($subjects as $sub): ?>
-                    <option value="<?= htmlspecialchars($sub['code']) ?>"
-                        <?= ($sub['code'] == $selected_subject_code) ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($sub['code'] . ' - ' . $sub['name']) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
+        <!-- SUBJECT & DATE SELECTION -->
+        <div class="class-row">
+            <form method="GET" action="">
+                <label>Select Subject & Date</label>
 
-            <input type="date" name="date" value="<?= htmlspecialchars($selected_date) ?>">
-            <button type="submit" class="go">Go</button>
-        </form>
-    </div>
+                <select name="subject" required>
+                    <option value="">-- Select Subject --</option>
+                    <?php foreach ($subjects as $sub): ?>
+                        <option value="<?= htmlspecialchars($sub['code']) ?>" <?= ($sub['code'] == $selected_subject_code) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($sub['code'] . ' - ' . $sub['name']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
 
-    <!-- ATTENDANCE TABLE -->
-    <div class="table-card">
-        <h2>
-            <?php if ($selected_subject_code): ?>
-                Subject: <?= htmlspecialchars($selected_subject_code) ?> – <?= htmlspecialchars($selected_date) ?>
-            <?php else: ?>
-                Please select a subject to view students
-            <?php endif; ?>
-        </h2>
+                <input type="date" name="date" value="<?= htmlspecialchars($selected_date) ?>">
+                <button type="submit" class="go">Go</button>
+            </form>
+        </div>
 
-        <?php if (!empty($students)): ?>
-            <form method="POST" action="save_attendance.php">
-                <input type="hidden" name="subject_code" value="<?= htmlspecialchars($selected_subject_code) ?>">
-                <input type="hidden" name="date" value="<?= htmlspecialchars($selected_date) ?>">
+        <!-- ATTENDANCE TABLE -->
+        <div class="table-card">
+            <h2>
+                <?php if ($selected_subject_code): ?>
+                    Subject: <?= htmlspecialchars($selected_subject_code) ?> – <?= htmlspecialchars($selected_date) ?>
+                <?php else: ?>
+                    Please select a subject to view students
+                <?php endif; ?>
+            </h2>
 
-                <table>
-                    <tr>
-                        <th>S. No.</th>
-                        <th>Roll No.</th>
-                        <th>Student Name</th>
-                        <th>Present</th>
-                        <th>Absent</th>
-                        <th>Leave</th>
-                    </tr>
+            <?php if (!empty($students)): ?>
+                <form method="POST" action="save_attendance.php">
+                    <input type="hidden" name="subject_code" value="<?= htmlspecialchars($selected_subject_code) ?>">
+                    <input type="hidden" name="date" value="<?= htmlspecialchars($selected_date) ?>">
 
-                    <?php
-                    $count = 1;
-                    foreach ($students as $s): ?>
-                        <?php 
+                    <table>
+                        <tr>
+                            <th>S. No.</th>
+                            <th>Roll No.</th>
+                            <th>Student Name</th>
+                            <th>Present</th>
+                            <th>Absent</th>
+                            <th>Leave</th>
+                        </tr>
+
+                        <?php
+                        $count = 1;
+                        foreach ($students as $s): ?>
+                            <?php
                             // Determine status: default 'P' if not set
                             $currentStatus = $attendanceMap[$s['roll']] ?? 'P';
-                        ?>
-                        <tr>
-                            <td><?= $count++ ?></td>
-                            <td><?= htmlspecialchars($s['roll']) ?></td>
-                            <td><?= htmlspecialchars($s['name']) ?></td>
+                            ?>
+                            <tr>
+                                <td><?= $count++ ?></td>
+                                <td><?= htmlspecialchars($s['roll']) ?></td>
+                                <td><?= htmlspecialchars($s['name']) ?></td>
 
-                            <!-- Radio buttons: one status per student -->
-                            <td>
-                                <input type="radio" name="status[<?= htmlspecialchars($s['roll']) ?>]" value="P" <?= ($currentStatus === 'P') ? 'checked' : '' ?>>
-                            </td>
-                            <td>
-                                <input type="radio" name="status[<?= htmlspecialchars($s['roll']) ?>]" value="A" <?= ($currentStatus === 'A') ? 'checked' : '' ?>>
-                            </td>
-                            <td>
-                                <input type="radio" name="status[<?= htmlspecialchars($s['roll']) ?>]" value="L" <?= ($currentStatus === 'L') ? 'checked' : '' ?>>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </table>
+                                <!-- Radio buttons: one status per student -->
+                                <td>
+                                    <input type="radio" name="status[<?= htmlspecialchars($s['roll']) ?>]" value="P"
+                                        <?= ($currentStatus === 'P') ? 'checked' : '' ?>>
+                                </td>
+                                <td>
+                                    <input type="radio" name="status[<?= htmlspecialchars($s['roll']) ?>]" value="A"
+                                        <?= ($currentStatus === 'A') ? 'checked' : '' ?>>
+                                </td>
+                                <td>
+                                    <input type="radio" name="status[<?= htmlspecialchars($s['roll']) ?>]" value="L"
+                                        <?= ($currentStatus === 'L') ? 'checked' : '' ?>>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </table>
 
-                <button type="submit" class="submit-btn">Submit Attendance</button>
-            </form>
-        <?php else: ?>
-            <?php if ($selected_subject_code): ?>
-                <p>No students found for this subject.</p>
+                    <button type="submit" class="submit-btn">Submit Attendance</button>
+                </form>
+            <?php else: ?>
+                <?php if ($selected_subject_code): ?>
+                    <p>No students found for this subject.</p>
+                <?php endif; ?>
             <?php endif; ?>
-        <?php endif; ?>
-    </div>
-
-    <!-- QUICK REPORT (static for now) -->
-    <div class="report-section">
-        <div class="left-box">
-            <h2>Quick Class Report</h2>
-            <select>
-                <option>Select Class</option>
-                <option>UG-I Physics</option>
-                <option>UG-II Math</option>
-            </select>
-            <button class="view-report">View Full Report</button>
-
-            <canvas id="chart" width="350" height="150"></canvas>
         </div>
 
-        <div class="right-box">
-            <h2>Students Below 75% Attendance</h2>
-            <table>
-                <tr>
-                    <th>Roll No.</th>
-                    <th>Absent</th>
-                    <th>Attendance %</th>
-                </tr>
-                <!-- TODO: future – calculate from attendance table -->
-                <tr>
-                    <td>AUID</td>
-                    <td>30</td>
-                    <td>65%</td>
-                </tr>
-                <tr>
-                    <td>AUIIID</td>
-                    <td>35</td>
-                    <td>68%</td>
-                </tr>
-            </table>
+        <!-- QUICK REPORT (static for now) -->
+        <div class="report-section">
+            <div class="left-box">
+                <h2>Quick Class Report</h2>
+                <select>
+                    <option>Select Class</option>
+                    <option>UG-I Physics</option>
+                    <option>UG-II Math</option>
+                </select>
+                <button class="view-report">View Full Report</button>
+
+                <canvas id="chart" width="350" height="150"></canvas>
+            </div>
+
+            <div class="right-box">
+                <h2>Students Below 75% Attendance</h2>
+                <table>
+                    <tr>
+                        <th>Roll No.</th>
+                        <th>Absent</th>
+                        <th>Attendance %</th>
+                    </tr>
+                    <!-- TODO: future – calculate from attendance table -->
+                    <tr>
+                        <td>AUID</td>
+                        <td>30</td>
+                        <td>65%</td>
+                    </tr>
+                    <tr>
+                        <td>AUIIID</td>
+                        <td>35</td>
+                        <td>68%</td>
+                    </tr>
+                </table>
+            </div>
         </div>
+
+        <footer>
+            © 2025 Akal University | All Rights Reserved
+        </footer>
+
     </div>
-
-    <footer>
-        © 2025 Akal University | All Rights Reserved
-    </footer>
-
-</div>
 
 </body>
+
 </html>
