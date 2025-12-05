@@ -133,6 +133,11 @@ $count   = isset($_GET['count']) ? (int)$_GET['count'] : 0;
         <li>Manage Users</li>
         <li>Settings</li>
     </ul>
+    
+    <!-- Logout Button -->
+    <div class="logout-box">
+        <a href="../logout.php" class="logout-btn">Logout</a>
+    </div>
 </div>
 
 <!-- MAIN CONTENT -->
