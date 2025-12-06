@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['department_name'])) {
     $name = trim($_POST['department_name']);
 
     if ($name !== '') {
-        $stmt = $conn->prepare("INSERT INTO department (name) VALUES (?)");
+        $stmt = $conn->prepare("INSERT INTO departments (name) VALUES (?)");
         if (!$stmt) {
             die("Prepare failed: " . $conn->error);
         }
@@ -22,13 +22,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['department_name'])) {
 /* ---------- DELETE ---------- */
 if (isset($_GET['delete'])) {
     $id = (int)$_GET['delete'];
-    $conn->query("DELETE FROM department WHERE id = $id");
+    $conn->query("DELETE FROM departments WHERE id = $id");
     header("Location: manage_departments.php");
     exit();
 }
 
 /* ---------- FETCH LIST ---------- */
-$result = $conn->query("SELECT * FROM department ORDER BY id ASC");
+$result = $conn->query("SELECT * FROM departments ORDER BY id ASC");
+
+if (!$result) {
+    die("Query Failed: " . $conn->error);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

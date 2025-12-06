@@ -30,10 +30,11 @@ $stmt->close();
 /* ----------------------- Load department for dropdown ----------------------- */
 /* Using simple query (no prepare) and escaping output for safety */
 $deptOptions = [];
-$resDept = $conn->query("SELECT DISTINCT department_name FROM department ORDER BY department_name");
+// FIX: Column name is `name`, not `department_name`
+$resDept = $conn->query("SELECT DISTINCT name FROM departments ORDER BY name");
 if ($resDept) {
     while ($row = $resDept->fetch_assoc()) {
-        $deptOptions[] = $row['department_name'];
+        $deptOptions[] = $row['name'];
     }
 } else {
     // If this fails, we'll still show the page and display an error below
@@ -41,16 +42,30 @@ if ($resDept) {
 }
 
 /* ----------------------- Load programs for the student's current department ----------------------- */
-$currentDept = $student['department'] ?? '';
+$currentDept = $student['department'] ?? ''; // FIX: field is `department` in admission table
 $programOptions = [];
+
+// Only fetch if we have a valid department name
 if (!empty($currentDept)) {
-    // Use real_escape_string to avoid SQL injection and avoid prepare problems
-    $deptEscaped = $conn->real_escape_string($currentDept);
-    $resProg = $conn->query("SELECT program FROM department WHERE department_name = '{$deptEscaped}' ORDER BY program");
-    if ($resProg) {
+    // We need to find the department ID first, or join tables. 
+    // Since `admission` stores department NAME, we join on departments.name
+    // programs table has `departmentId`
+    
+    $sqlProg = "SELECT p.name as program_name 
+                FROM programs p
+                JOIN departments d ON p.departmentId = d.id
+                WHERE d.name = ?
+                ORDER BY p.name";
+                
+    $stmtProg = $conn->prepare($sqlProg);
+    if ($stmtProg) {
+        $stmtProg->bind_param("s", $currentDept);
+        $stmtProg->execute();
+        $resProg = $stmtProg->get_result();
         while ($r = $resProg->fetch_assoc()) {
-            $programOptions[] = $r['program'];
+            $programOptions[] = $r['program_name'];
         }
+        $stmtProg->close();
     } else {
         $prog_load_error = "Failed to load programs: " . $conn->error;
     }
@@ -198,6 +213,5 @@ document.getElementById('department-select').addEventListener('change', function
         });
 });
 </script>
-
 </body>
 </html>
