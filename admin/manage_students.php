@@ -225,29 +225,57 @@ $result = $stmt->get_result();
     </div>
 
     <!-- 📄 PAGINATION -->
+    <!-- 📄 SMART PAGINATION -->
     <?php if ($totalPages > 1): ?>
         <div class="pagination">
             <?php
-            // keep query parameters for pagination links
             $baseQuery = $_GET;
+            
+            // Helper to generate link
+            function pageLink($p, $base, $label=null, $active=false) {
+                $base['page'] = $p;
+                $url = '?' . http_build_query($base);
+                $cls = $active ? 'active-page' : '';
+                $lbl = $label ?? $p;
+                return "<a href=\"{$url}\" class=\"{$cls}\">{$lbl}</a>";
+            }
+
+            // Prev
+            if ($page > 1) {
+                echo pageLink($page - 1, $baseQuery, '&laquo; Prev');
+            } else {
+                echo '<span class="disabled">&laquo; Prev</span>';
+            }
+
+            // Calculate pages to show
+            // Always show 1 and Last.
+            // Show window around current page (e.g. current-2 to current+2)
+            $window = 2;
+            $pagesToShow = [1, $totalPages]; // Ensure first and last are always there
+            for ($i = max(2, $page - $window); $i <= min($totalPages - 1, $page + $window); $i++) {
+                $pagesToShow[] = $i;
+            }
+            $pagesToShow = array_unique($pagesToShow);
+            sort($pagesToShow);
+
+            $prevPageNum = 0;
+            foreach ($pagesToShow as $p) {
+                // If gap exists, show dots
+                if ($prevPageNum > 0 && $p > $prevPageNum + 1) {
+                    echo '<span class="pagination-dots">...</span>';
+                }
+                
+                echo pageLink($p, $baseQuery, null, ($p == $page));
+                $prevPageNum = $p;
+            }
+
+            // Next
+            if ($page < $totalPages) {
+                echo pageLink($page + 1, $baseQuery, 'Next &raquo;');
+            } else {
+                echo '<span class="disabled">Next &raquo;</span>';
+            }
             ?>
-            <?php if ($page > 1): ?>
-                <?php $baseQuery['page'] = $page - 1; ?>
-                <a href="?<?= http_build_query($baseQuery) ?>">&laquo; Prev</a>
-            <?php endif; ?>
-
-            <?php for ($p = 1; $p <= $totalPages; $p++): ?>
-                <?php $baseQuery['page'] = $p; ?>
-                <a href="?<?= http_build_query($baseQuery) ?>" 
-                   class="<?= ($p == $page) ? 'active-page' : '' ?>">
-                    <?= $p ?>
-                </a>
-            <?php endfor; ?>
-
-            <?php if ($page < $totalPages): ?>
-                <?php $baseQuery['page'] = $page + 1; ?>
-                <a href="?<?= http_build_query($baseQuery) ?>">Next &raquo;</a>
-            <?php endif; ?>
         </div>
     <?php endif; ?>
 
