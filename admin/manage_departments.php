@@ -1,17 +1,21 @@
 <?php
 include('../includes/db_connect.php');
 include('../includes/session_check.php');
+include('../includes/id_helper.php');
 
 /* ---------- ADD NEW DEPARTMENT ---------- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['department_name'])) {
     $name = trim($_POST['department_name']);
 
     if ($name !== '') {
-        $stmt = $conn->prepare("INSERT INTO departments (name) VALUES (?)");
+        // Generate Custom ID (D-XXXX)
+        $newId = generateCustomId($conn, 'D', 'departments', 'id', 4);
+        
+        $stmt = $conn->prepare("INSERT INTO departments (id, name) VALUES (?, ?)");
         if (!$stmt) {
             die("Prepare failed: " . $conn->error);
         }
-        $stmt->bind_param("s", $name);
+        $stmt->bind_param("ss", $newId, $name);
         $stmt->execute();
         $stmt->close();
     }
