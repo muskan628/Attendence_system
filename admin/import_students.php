@@ -22,16 +22,7 @@ if (!$handle) {
 /* ----------------------------------------------------
    1) Helper Functions for UUID and Relational Data
    ---------------------------------------------------- */
-function generateUuid() {
-    return sprintf(
-        '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-        mt_rand(0, 0xffff), mt_rand(0, 0xffff),
-        mt_rand(0, 0xffff),
-        mt_rand(0, 0x0fff) | 0x4000,
-        mt_rand(0, 0x3fff) | 0x8000,
-        mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
-    );
-}
+include('../includes/id_helper.php');
 
 function getOrCreateDepartment($conn, $name) {
     if (empty($name)) return null;
@@ -46,8 +37,9 @@ function getOrCreateDepartment($conn, $name) {
     }
     $stmt->close();
     
-    // Create
-    $newId = generateUuid();
+    // Create with Custom ID (D-XXXX)
+    $newId = generateCustomId($conn, 'D', 'departments', 'id', 4);
+    
     $stmt = $conn->prepare("INSERT INTO departments (id, name) VALUES (?, ?)");
     $stmt->bind_param("ss", $newId, $name);
     $stmt->execute();
@@ -69,9 +61,10 @@ function getOrCreateProgram($conn, $name, $deptId, $batch) {
     }
     $stmt->close();
     
-    // Create
-    $newId = generateUuid();
-    $batchVal = $batch ?: date('Y'); // Default batch if empty
+    // Create with Custom ID (P-XXX)
+    $newId = generateCustomId($conn, 'P', 'programs', 'programId', 3);
+    
+    $batchVal = $batch ?: date('Y');
     $stmt = $conn->prepare("INSERT INTO programs (programId, name, batch, departmentId) VALUES (?, ?, ?, ?)");
     $stmt->bind_param("ssss", $newId, $name, $batchVal, $deptId);
     $stmt->execute();
@@ -94,9 +87,25 @@ function getOrCreateStudent($conn, $email, $name, $programId, $startYear) {
     $stmt->close();
     
     // Create
-    // Schema: studentUid (PK), id (Unique), studentName, studentEmail, studentRole, studentStartingYear, studentProgramId
-    $uid = generateUuid();
-    $id = generateUuid(); 
+    // KEEP UUID for Students unless user asked to change them too. 
+    // User only mentioned Dept and Program IDs.
+    // We can assume generateUuid() is still needed for students if not found in helper.
+    // Or we can move generateUuid() to helper or keep it here.
+    // The previous code had generic generateUuid() function. 
+    // Since I removed it from top, I should add it back or use a library, 
+    // OR create a simple one here if not in helper.
+    // Wait, I replaced lines 25-113. generateUuid was at line 25.
+    // I should probably keep generateUuid or move it. 
+    // I will use a simple UUID generator here or add it to helper.
+    $uid = sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+        mt_rand(0, 0xffff), mt_rand(0, 0xffff),
+        mt_rand(0, 0xffff),
+        mt_rand(0, 0x0fff) | 0x4000,
+        mt_rand(0, 0x3fff) | 0x8000,
+        mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
+    );
+    
+    $id = $uid; // Using UID for 'id' as well for now
     $role = 'Student';
     $year = $startYear ?: date('Y');
     
