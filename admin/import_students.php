@@ -38,10 +38,12 @@ function getOrCreateDepartment($conn, $name) {
     
     // Check exist
     $stmt = $conn->prepare("SELECT id FROM departments WHERE name = ?");
+    if (!$stmt) return null;
     $stmt->bind_param("s", $name);
     $stmt->execute();
     $res = $stmt->get_result();
     if ($row = $res->fetch_assoc()) {
+        $stmt->close();
         return $row['id'];
     }
     $stmt->close();
@@ -49,8 +51,12 @@ function getOrCreateDepartment($conn, $name) {
     // Create
     $newId = generateUuid();
     $stmt = $conn->prepare("INSERT INTO departments (id, name) VALUES (?, ?)");
+    if (!$stmt) return null;
     $stmt->bind_param("ss", $newId, $name);
-    $stmt->execute();
+    if (!$stmt->execute()) {
+        $stmt->close();
+        return null;
+    }
     $stmt->close();
     
     return $newId;
@@ -61,10 +67,12 @@ function getOrCreateProgram($conn, $name, $deptId, $batch) {
     
     // Check exist
     $stmt = $conn->prepare("SELECT programId FROM programs WHERE name = ? AND departmentId = ?");
+    if (!$stmt) return null;
     $stmt->bind_param("ss", $name, $deptId);
     $stmt->execute();
     $res = $stmt->get_result();
     if ($row = $res->fetch_assoc()) {
+        $stmt->close();
         return $row['programId'];
     }
     $stmt->close();
@@ -73,8 +81,12 @@ function getOrCreateProgram($conn, $name, $deptId, $batch) {
     $newId = generateUuid();
     $batchVal = $batch ?: date('Y'); // Default batch if empty
     $stmt = $conn->prepare("INSERT INTO programs (programId, name, batch, departmentId) VALUES (?, ?, ?, ?)");
+    if (!$stmt) return null;
     $stmt->bind_param("ssss", $newId, $name, $batchVal, $deptId);
-    $stmt->execute();
+    if (!$stmt->execute()) {
+        $stmt->close();
+        return null;
+    }
     $stmt->close();
     
     return $newId;
@@ -85,10 +97,12 @@ function getOrCreateStudent($conn, $email, $name, $programId, $startYear) {
     
     // Check exist
     $stmt = $conn->prepare("SELECT studentUid FROM students WHERE studentEmail = ?");
+    if (!$stmt) return null;
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $res = $stmt->get_result();
     if ($row = $res->fetch_assoc()) {
+        $stmt->close();
         return $row['studentUid'];
     }
     $stmt->close();
@@ -103,8 +117,10 @@ function getOrCreateStudent($conn, $email, $name, $programId, $startYear) {
     if (!$programId) return null;
 
     $stmt = $conn->prepare("INSERT INTO students (studentUid, id, studentName, studentEmail, studentRole, studentStartingYear, studentProgramId) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    if (!$stmt) return null;
     $stmt->bind_param("sssssss", $uid, $id, $name, $email, $role, $year, $programId);
     if (!$stmt->execute()) {
+        $stmt->close();
         return null;
     }
     $stmt->close();
@@ -117,6 +133,9 @@ function getOrCreateStudent($conn, $email, $name, $programId, $startYear) {
    ---------------------------------------------------- */
 $dbCols = [];
 $res = $conn->query("SHOW COLUMNS FROM admission");
+if (!$res) {
+    die("SQL ERROR: Cannot read admission table structure - " . $conn->error);
+}
 while ($col = $res->fetch_assoc()) {
     if (stripos($col['Extra'], 'auto_increment') !== false) {
         continue; // skip id
@@ -124,6 +143,10 @@ while ($col = $res->fetch_assoc()) {
     $dbCols[] = $col['Field'];
 }
 $res->free();
+
+if (count($dbCols) === 0) {
+    die("ERROR: No insertable columns found in admission table.");
+}
 
 $expectedCols = count($dbCols);
 
@@ -195,8 +218,16 @@ while (($row = fgetcsv($handle)) !== false) {
     if ($idxUid !== false && $stuUid) {
         $row[$idxUid] = $stuUid;
     } elseif ($idxUid !== false && !$stuUid) {
-        // Log basic info for debugging
-         die("Create Student Error on row $rowNumber. UID creation failed. Check Email: $stuEmail");
+        // Log error details for debugging
+        $errorMsg = "Create Student Error on row $rowNumber. UID creation failed.\n";
+        $errorMsg .= "Email: " . ($stuEmail ?: 'empty') . "\n";
+        $errorMsg .= "Name: " . ($stuName ?: 'empty') . "\n";
+        $errorMsg .= "Department: " . ($deptName ?: 'empty') . "\n";
+        $errorMsg .= "Program: " . ($progName ?: 'empty') . "\n";
+        $errorMsg .= "Program ID: " . ($progId ?: 'null') . "\n";
+        $errorMsg .= "Department ID: " . ($deptId ?: 'null') . "\n";
+        $errorMsg .= "DB Error: " . ($conn->error ?: 'none');
+        die($errorMsg);
     }
 
     /* ------------------------------------------------
