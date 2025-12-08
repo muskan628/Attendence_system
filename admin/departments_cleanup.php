@@ -10,16 +10,16 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $department_id = $_POST['department_id'] ?? '';
 $action        = $_POST['dept_action'] ?? '';
 
-if (!is_numeric($department_id) || ($action !== 'temp_trash' && $action !== 'permanent_delete')) {
+if (($action !== 'temp_trash' && $action !== 'permanent_delete')) {
     header("Location: settings.php");
     exit();
 }
 
-$department_id = (int)$department_id;
+//$department_id = (int)$department_id; // REMOVED cast
 
 // 1) Check department exists
 $stmtDept = $conn->prepare("SELECT ID, DEPARTMENT_NAME FROM department WHERE ID = ?");
-$stmtDept->bind_param("i", $department_id);
+$stmtDept->bind_param("s", $department_id);
 $stmtDept->execute();
 $resDept = $stmtDept->get_result();
 $dept    = $resDept->fetch_assoc();
@@ -41,7 +41,7 @@ if ($action === 'temp_trash') {
     if (!$stmtTrash) {
         die("Prepare failed (trash dept): " . $conn->error);
     }
-    $stmtTrash->bind_param("is", $department_id, $deptName);
+    $stmtTrash->bind_param("ss", $department_id, $deptName);
     $stmtTrash->execute();
     $stmtTrash->close();
 
@@ -68,7 +68,7 @@ if ($action === 'temp_trash') {
 
     // Now delete department from main table
     $stmtDelDept = $conn->prepare("DELETE FROM department WHERE ID = ?");
-    $stmtDelDept->bind_param("i", $department_id);
+    $stmtDelDept->bind_param("s", $department_id);
     $stmtDelDept->execute();
     $stmtDelDept->close();
 
@@ -89,7 +89,7 @@ if ($action === 'permanent_delete') {
 
     // Now permanent delete department
     $stmtDelDept = $conn->prepare("DELETE FROM department WHERE ID = ?");
-    $stmtDelDept->bind_param("i", $department_id);
+    $stmtDelDept->bind_param("s", $department_id);
     $stmtDelDept->execute();
     $stmtDelDept->close();
 
