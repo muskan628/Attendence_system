@@ -177,6 +177,32 @@ include('../includes/session_check.php');
       <a href="manage_trash.php" class="btn-outline">🗑️ Open Trash Manager (Students & Departments)</a>
     </div>
 
+    <!-- 0) Export Data -->
+    <div class="settings-section">
+      <h2>Export Data</h2>
+      <p>Download system data as CSV files.</p>
+      
+      <form method="POST" action="export_data.php">
+        <div class="form-row-inline">
+          <div class="form-group">
+            <label for="export_type">Data Type</label>
+            <select id="export_type" name="export_type" required>
+              <option value="">-- Select Data to Export --</option>
+              <option value="students">Student Data (Admission)</option>
+              <option value="departments">Department Data</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label>&nbsp;</label>
+            <button type="submit" class="btn" style="background-color: #2563eb; color: white; border:none; padding: 8px 14px; border-radius: 8px; font-weight: 600; cursor: pointer;">
+              Export CSV
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
     <!-- 1) Student Data Cleanup -->
     <div class="settings-section">
       <h2>

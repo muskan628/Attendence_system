@@ -3,18 +3,19 @@ include('../includes/db_connect.php');
 include('../includes/session_check.php');
 
 // --------- 1) Get department by ID ----------
-if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+// --------- 1) Get department by ID ----------
+if (!isset($_GET['id'])) {
     die("Invalid department ID.");
 }
 
-$id = (int)$_GET['id'];
+$id = $_GET['id'];
 
 $stmt = $conn->prepare("SELECT ID, DEPARTMENT_NAME FROM department WHERE ID = ?");
 if (!$stmt) {
     die("Prepare failed: " . $conn->error);
 }
 
-$stmt->bind_param("i", $id);
+$stmt->bind_param("s", $id);
 $stmt->execute();
 $result = $stmt->get_result();
 $dept   = $result->fetch_assoc();
@@ -39,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             die("Prepare failed (update): " . $conn->error);
         }
 
-        $stmt->bind_param("si", $name, $id);
+        $stmt->bind_param("ss", $name, $id);
 
         if ($stmt->execute()) {
             $stmt->close();

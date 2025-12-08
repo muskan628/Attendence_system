@@ -25,8 +25,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['department_name'])) {
 
 /* ---------- DELETE ---------- */
 if (isset($_GET['delete'])) {
-    $id = (int)$_GET['delete'];
-    $conn->query("DELETE FROM departments WHERE id = $id");
+    $id = $_GET['delete'];
+    $stmt = $conn->prepare("DELETE FROM departments WHERE id = ?");
+    $stmt->bind_param("s", $id);
+    $stmt->execute();
+    $stmt->close();
     header("Location: manage_departments.php");
     exit();
 }
