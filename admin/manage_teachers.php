@@ -250,12 +250,8 @@ if (!$result) {
             <form class="manage-form" method="POST">
                 <input type="text" name="name" placeholder="Name" required>
                 <input type="email" name="email" placeholder="Email" required>
-                <select name="department" required>
-                    <option value="">Select Department</option>
-                    <?php foreach ($depts as $d): ?>
-                        <option value="<?= htmlspecialchars($d) ?>"><?= htmlspecialchars($d) ?></option>
-                    <?php endforeach; ?>
-                </select>
+                <!-- Replaced Dropdown with Text Input as requested -->
+                <input type="text" name="department" placeholder="Department" required>
                 <input type="text" name="designation" placeholder="Designation (e.g. Assistant Professor)">
                 <button type="submit">Add Teacher</button>
             </form>
