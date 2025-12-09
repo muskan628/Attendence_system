@@ -65,8 +65,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'])) {
             $stmt = $conn->prepare("INSERT INTO teachers ($colName, email, $colDept, designation) VALUES (?, ?, ?, ?)");
             $stmt->bind_param("ssss", $name, $email, $dept, $desig);
         } else {
-            // Use custom ID
-            $newId = generateCustomId($conn, 'T', 'teachers', 'id', 4);
+            // Use custom ID format: T-YYXXXX (e.g., T-251234)
+            $year = date('y');
+            $uniqueFound = false;
+            $newId = '';
+
+            // Retry loop to ensure uniqueness
+            for ($i = 0; $i < 10; $i++) {
+                $rand = rand(1000, 9999);
+                $newId = "T-" . $year . $rand;
+
+                // Check if exists
+                $chk = $conn->query("SELECT id FROM teachers WHERE id = '$newId'");
+                if ($chk->num_rows == 0) {
+                    $uniqueFound = true;
+                    break;
+                }
+            }
+
+            if (!$uniqueFound) {
+                // Fallback: Use timestamp if random fails 10 times (highly unlikely)
+                $newId = "T-" . $year . substr(time(), -4);
+            }
+
             $stmt = $conn->prepare("INSERT INTO teachers (id, $colName, email, $colDept, designation) VALUES (?, ?, ?, ?, ?)");
             $stmt->bind_param("sssss", $newId, $name, $email, $dept, $desig);
         }
