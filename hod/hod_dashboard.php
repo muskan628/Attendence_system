@@ -128,6 +128,7 @@ $count   = isset($_GET['count']) ? (int)$_GET['count'] : 0;
     <h2>Akal University</h2>
     <ul>
         <li class="active">Dashboard</li>
+        <li><a href="manage_subjects.php" style="color: inherit; text-decoration: none;">Manage Subjects</a></li>
         <li>Detailed Reports</li>
         <li>Defaulter List</li>
         <li>Manage Users</li>

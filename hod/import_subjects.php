@@ -130,7 +130,7 @@ if (isset($_POST['import']) && isset($_FILES['csv_file'])) {
     }
 
     fclose($file);
-    header("Location: hod_dashboard.php?status=subject_imported&count=$inserted");
+    header("Location: manage_subjects.php?status=subject_imported&count=$inserted");
     exit;
 
 } else {
