@@ -1,4 +1,11 @@
-<?php include("sidebar.php"); ?>
+<?php
+include('../includes/session_check.php');
+if($_SESSION['role'] !== 'admin'){
+    header("Location: ../index.php");
+    exit();
+}
+include("sidebar.php");
+?>
 <div class="main-content">
 
     <h2>Student Attendance</h2>

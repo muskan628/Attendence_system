@@ -58,11 +58,12 @@ $defaulters = [
             <li class="active">Dashboard</li>
             <li>Detailed Reports</li>
             <li>Defaulter List</li>
-            <li>Manage Users</li>
+            <li onclick="window.location.href='manage_users.php'">Manage Users</li>
             <li onclick="window.location.href='manage_students.php'">Manage Students</li>
             <li onclick="window.location.href='manage_departments.php'">Manage Departments</li>
             <li onclick="window.location.href='manage_teachers.php'">Manage Teachers</li>
             <li onclick="window.location.href='settings.php'">Settings</li>
+
         </ul>
 
         <!-- Logout Button -->
