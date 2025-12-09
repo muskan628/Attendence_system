@@ -62,15 +62,40 @@ if ($expectedCols === 0) {
 
 /*
    2) Prepare SQL template
+      We need to insert 'id' + detected columns.
+      The CSV is expected to have: S.No (ignored) + Value for each detected column.
 */
-$columns      = "`" . implode("`, `", $dbCols) . "`";
-$placeholders = rtrim(str_repeat("?,", $expectedCols), ",");
 
-$sqlTemplate = "INSERT INTO teachers ($columns) VALUES ($placeholders)";
+// Filter out 'id' from detected columns if it's there (we generate it)
+$csvTargetCols = [];
+$primaryKeyCol = 'id'; // Default assumption
+foreach ($dbCols as $col) {
+    if ($col === 'id') {
+        $primaryKeyCol = $col;
+        continue;
+    }
+    $csvTargetCols[] = $col;
+}
+
+// Final list of columns to INSERT into DB: id + others
+$finalDbCols = array_merge([$primaryKeyCol], $csvTargetCols);
+$columnsSql  = "`" . implode("`, `", $finalDbCols) . "`";
+
+// Placeholders: ? for ID + ? for each CSV column
+$placeholders = rtrim(str_repeat("?,", count($finalDbCols)), ",");
+
+$sqlTemplate = "INSERT INTO teachers ($columnsSql) VALUES ($placeholders)";
 
 $isHeader    = true;
 $rowNumber   = 0;
 $inserted    = 0;
+$year        = date('y'); // For ID generation
+
+// Prepare statement once
+$stmt = $conn->prepare($sqlTemplate);
+if (!$stmt) {
+    die("SQL PREPARE ERROR: " . $conn->error);
+}
 
 while (($row = fgetcsv($handle)) !== false) {
     $rowNumber++;
@@ -86,43 +111,63 @@ while (($row = fgetcsv($handle)) !== false) {
         continue;
     }
 
-    // trim or pad row to exact column count
-    if (count($row) > $expectedCols) {
-        $row = array_slice($row, 0, $expectedCols);
-    } elseif (count($row) < $expectedCols) {
-        $row = array_pad($row, $expectedCols, "");
+    // 1. Remove S.No (First Column)
+    if (count($row) > 0) {
+        array_shift($row);
     }
 
-    if (count($row) != $expectedCols) {
-        die("Row $rowNumber mismatch: expected $expectedCols columns (" . implode(", ", $dbCols) . "), got " . count($row));
+    // 2. Normalize row length to match expected target columns (excluding ID)
+    $expectedCsvCount = count($csvTargetCols);
+
+    if (count($row) > $expectedCsvCount) {
+        $row = array_slice($row, 0, $expectedCsvCount);
+    } elseif (count($row) < $expectedCsvCount) {
+        $row = array_pad($row, $expectedCsvCount, "");
     }
 
-    $stmt = $conn->prepare($sqlTemplate);
-    if (!$stmt) {
-        die("SQL PREPARE ERROR on row $rowNumber: " . $conn->error);
+    // 3. Generate Auto ID (Unique per row)
+    $uniqueFound = false;
+    $newId = '';
+    // Simple retry loop for uniqueness
+    for ($try = 0; $try < 5; $try++) {
+        $rand = rand(1000, 9999);
+        $candId = "T-" . $year . $rand;
+        // Check valid format logic only, Collision check is via DB constraint usually but here we pre-check
+        // Note: In high volume, pre-check inside loop is slow, but for CSV import it's acceptable.
+        $chk = $conn->query("SELECT id FROM teachers WHERE id = '$candId'");
+        if ($chk->num_rows == 0) {
+            $newId = $candId;
+            $uniqueFound = true;
+            break;
+        }
+    }
+    if (!$uniqueFound) {
+        $newId = "T-" . $year . substr(time(), -4); // Fallback
     }
 
-    // Type definition (all strings 's')
-    $types = str_repeat("s", $expectedCols);
-    $bind  = [$types];
+    // 4. Construct Data for Bind
+    // [ID, Col1, Col2, ...]
+    $bindData = array_merge([$newId], $row);
 
-    // convert each value to variable reference
-    for ($i = 0; $i < $expectedCols; $i++) {
-        $row[$i] = trim($row[$i]);
-        $bind[]  = &$row[$i];
+    // 5. Bind and Execute
+    $types = str_repeat("s", count($bindData));
+    $bindParams = [$types];
+    foreach ($bindData as $k => $v) {
+        $bindData[$k] = trim($v); // Trim values
+        $bindParams[] = &$bindData[$k];
     }
 
-    // dynamic bind_param
-    call_user_func_array([$stmt, "bind_param"], $bind);
+    call_user_func_array([$stmt, "bind_param"], $bindParams);
 
     if (!$stmt->execute()) {
-        $stmt->close();
-        die("Insert Error on row $rowNumber → " . $stmt->error);
+        // If error is duplicate entry, maybe retry ID? 
+        // For now, die or skip. Die is safer to alert user.
+        die("Insert Error on row $rowNumber (ID: $newId) → " . $stmt->error);
     }
 
     $inserted++;
-    $stmt->close();
 }
+$stmt->close();
 
 fclose($handle);
 
